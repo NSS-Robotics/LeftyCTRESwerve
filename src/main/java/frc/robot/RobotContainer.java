@@ -16,7 +16,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
-import frc.robot.commands.IntakeGround;
+import frc.robot.commands.Align;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.*;
 
@@ -36,11 +36,12 @@ public class RobotContainer {
 
     // Subsystems
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
-    public final Indexer indexer = new Indexer();
-    public final Intake intake = new Intake(this);
-    public final IntakePivot intakePivot = new IntakePivot(this);
-    public final ArmPivot armPivot = new ArmPivot(this);
-    public final Elevator elevator = new Elevator(this);
+    public final Limelight limelight = new Limelight("front");
+    // public final Indexer indexer = new Indexer();
+    // public final Intake intake = new Intake(this);
+    // public final IntakePivot intakePivot = new IntakePivot(this);
+    // public final ArmPivot armPivot = new ArmPivot(this);
+    // public final Elevator elevator = new Elevator(this);
 
     // Variables
     public boolean isCoral = true;
@@ -81,24 +82,8 @@ public class RobotContainer {
         // zero gyro
         driverController.y().onTrue(new InstantCommand(() -> drivetrain.seedFieldCentric()));
 
-        driverController
-            .leftTrigger()
-            .whileTrue(new SequentialCommandGroup(
-                new InstantCommand(() -> elevator.setPosition(0.9)),
-                new IntakeGround(this)
-            ));
-        
-        driverController
-            .povLeft()
-            .onTrue(
-                new SequentialCommandGroup(
-                    new InstantCommand(() -> elevator.setPosition(Constants.Elevator.pos[RobotState.algaeReefLow.ordinal()])),
-                    new WaitCommand(0.1),
-                    new InstantCommand(() -> armPivot.setPosition(Constants.ArmPivot.pos[RobotState.algaeReefLow.ordinal()]))//,
-                    // new InstantCommand(() -> m_claw.makeMotorSpin(-0.7))
-                )
-            );
-}
+        driverController.a().onTrue(new Align(this));
+    }
 
     public Command getAutonomousCommand() {
         return Commands.print("No autonomous command configured");

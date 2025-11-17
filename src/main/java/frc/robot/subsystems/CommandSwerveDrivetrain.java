@@ -238,6 +238,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 m_hasAppliedOperatorPerspective = true;
             });
         }
+
+        SmartDashboard.putNumber("Position X", getPoseMeters().getX());
+        SmartDashboard.putNumber("Position Y", getPoseMeters().getY());
     }
 
     private void startSimThread() {
@@ -287,5 +290,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         Matrix<N3, N1> visionMeasurementStdDevs
     ) {
         super.addVisionMeasurement(visionRobotPoseMeters, Utils.fpgaToCurrentTime(timestampSeconds), visionMeasurementStdDevs);
+    }
+
+    // CUSTOM CODE
+    public Pose2d getPoseMeters() {
+        return getState().Pose;
     }
 }

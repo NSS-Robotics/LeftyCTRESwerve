@@ -63,7 +63,7 @@ public class Align extends Command {
     public boolean isFinished() {
         Pose2d currentPos = new Pose2d(limelight.getTX(),limelight.getTY(), Rotation2d.fromDegrees(limelight.getRZ()));
 
-        if (Math.abs(currentPos.getX() - targetPos.getX()) < 0.1) {
+        if (Math.abs(currentPos.getX() - targetPos.getX()) < 0.1 && Math.abs(currentPos.getY() - targetPos.getY()) < 0.1) {
             return true;
         }
 

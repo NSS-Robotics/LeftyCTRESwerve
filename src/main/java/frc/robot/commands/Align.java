@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.Limelight;
 
 public class Align extends Command {
     private final CommandSwerveDrivetrain swerve;
@@ -16,18 +17,20 @@ public class Align extends Command {
 
     private Pose2d startPos;
     private Pose2d targetPos;
+    private Limelight limelight;
 
     public Align(RobotContainer rob) {
         this.swerve = rob.drivetrain;
+        this.limelight = rob.limelight;
     }
 
     @Override
     public void initialize() {
-        startPos = swerve.getPoseMeters();
+        startPos = new Pose2d(limelight.getTX(),limelight.getTY(), Rotation2d.fromDegrees(limelight.getRZ()));
         targetPos = new Pose2d(
-            swerve.getPoseMeters().getX() + 0.3,
-            swerve.getPoseMeters().getY() - 0.3,
-            Rotation2d.fromDegrees(swerve.getPigeon2().getYaw().getValueAsDouble())
+            -2.143515110015869,
+            -12.601139068603516,
+            Rotation2d.fromDegrees(limelight.getRZ())
         );
     }
 
@@ -58,7 +61,7 @@ public class Align extends Command {
 
     @Override
     public boolean isFinished() {
-        Pose2d currentPos = swerve.getPoseMeters();
+        Pose2d currentPos = new Pose2d(limelight.getTX(),limelight.getTY(), Rotation2d.fromDegrees(limelight.getRZ()));
 
         if (Math.abs(currentPos.getX() - targetPos.getX()) < 0.1) {
             return true;

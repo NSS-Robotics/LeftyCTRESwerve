@@ -27,12 +27,21 @@ public class Limelight extends SubsystemBase {
     public void turnLimelightLED(boolean on) {
         table.getEntry("ledMode").setNumber(on ? 3 : 1);
     }
+    public double getTX(){
+         return NetworkTableInstance.getDefault().getTable("limelight").getEntry("tx").getDouble(0);
+    }
+    public double getTY(){
+        return NetworkTableInstance.getDefault().getTable("limelight").getEntry("ty").getDouble(0);
+   }
+   public double getRZ(){
+        return NetworkTableInstance.getDefault().getTable("limelight").getEntry("rz").getDouble(0);
+   }
 
     public void updateLimelightTracking() {
-        ta = table.getEntry("ta").getDouble(0);
-        tx = table.getEntry("tx").getDouble(0);
-        ty = table.getEntry("ty").getDouble(0);
-        tv = table.getEntry("tv").getDouble(0);
+        ta = NetworkTableInstance.getDefault().getTable("limelight").getEntry("ta").getDouble(0);
+        tx = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tx").getDouble(0);
+        ty = NetworkTableInstance.getDefault().getTable("limelight").getEntry("ty").getDouble(0);
+        tv = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tv").getDouble(0);
 
         SmartDashboard.putNumber("tx", tx);
         SmartDashboard.putNumber("ty", ty);

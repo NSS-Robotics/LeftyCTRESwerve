@@ -28,8 +28,8 @@ public class Align extends Command {
     public void initialize() {
         startPos = new Pose2d(limelight.getTX(),limelight.getTY(), Rotation2d.fromDegrees(limelight.getRZ()));
         targetPos = new Pose2d(
-            -2.143515110015869,
-            -12.601139068603516,
+            limelight.getTX() + 1,
+            limelight.getTY() + 1,
             Rotation2d.fromDegrees(limelight.getRZ())
         );
     }
@@ -61,9 +61,9 @@ public class Align extends Command {
 
     @Override
     public boolean isFinished() {
-        Pose2d currentPos = new Pose2d(limelight.getTX(),limelight.getTY(), Rotation2d.fromDegrees(limelight.getRZ()));
+        //Pose2d currentPos = new Pose2d(limelight.getTX(),limelight.getTY(), Rotation2d.fromDegrees(limelight.getRZ()));
 
-        if (Math.abs(currentPos.getX() - targetPos.getX()) < 0.1 && Math.abs(currentPos.getY() - targetPos.getY()) < 0.1) {
+        if (Math.abs(limelight.getTX() - targetPos.getX()) < 0.1 && Math.abs(limelight.getTY() - targetPos.getY()) < 0.1) {
             return true;
         }
 

@@ -12,12 +12,12 @@ import frc.robot.subsystems.Limelight;
 
 public class Align extends Command {
     private final CommandSwerveDrivetrain swerve;
+    private final Limelight limelight;
 
     private final SwerveRequest.FieldCentric alignRequest = new SwerveRequest.FieldCentric();
 
-    private Pose2d startPos;
+    private Pose2d currentPos;
     private Pose2d targetPos;
-    private Limelight limelight;
 
     public Align(RobotContainer rob) {
         this.swerve = rob.drivetrain;
@@ -26,12 +26,26 @@ public class Align extends Command {
 
     @Override
     public void initialize() {
-        startPos = new Pose2d(limelight.getTX(),limelight.getTY(), Rotation2d.fromDegrees(limelight.getRZ()));
-        targetPos = new Pose2d(
-            limelight.getTX() + 1,
-            limelight.getTY() + 1,
-            Rotation2d.fromDegrees(limelight.getRZ())
+        currentPos = new Pose2d(
+            limelight.botPose.getX(),
+            limelight.botPose.getY(),
+            Rotation2d.fromDegrees(limelight.getRotation())
         );
+        targetPos = new Pose2d(
+            5.25,
+            1.35,
+            Rotation2d.fromDegrees(limelight.getRotation())
+        );
+    }
+
+    public double mapDistanceToVelocity(double distance) {
+        final double maxVel = 1;
+        final double minVel = 0.2;
+
+        distance = Math.abs(distance);
+        if (distance > 1) distance = 1;
+
+        return minVel + distance * (maxVel - minVel);
     }
 
     @Override
@@ -41,33 +55,44 @@ public class Align extends Command {
 
         double xVelocity = 0;
         double yVelocity = 0;
+        double deadZone =  0.13;
 
-        if (targetPos.getX() > startPos.getX()) {
-            xVelocity = -0.25;
-        } else if (targetPos.getX() < startPos.getX()) {
+        currentPos = new Pose2d(
+            limelight.botPose.getX(),
+            limelight.botPose.getY(),
+            Rotation2d.fromDegrees(limelight.getRotation())
+        );
+
+        if ((targetPos.getX() + deadZone) > currentPos.getX()) {
             xVelocity = 0.25;
+        } else if ((targetPos.getX() - deadZone) < currentPos.getX()) {
+            xVelocity = -0.25;
         }
 
-        if (targetPos.getY() > startPos.getY()) {
-            yVelocity = -0.25;
-        } else if (targetPos.getY() < startPos.getY()) {
+        if ((targetPos.getY() + deadZone) > currentPos.getY()) {
             yVelocity = 0.25;
+        } else if ((targetPos.getY() - deadZone) < currentPos.getY()) {
+            yVelocity = -0.25;
         }
+
+        SmartDashboard.putNumber("X Velocity", xVelocity);
+        SmartDashboard.putNumber("Y Velocity", yVelocity);
 
         swerve.setControl(
             alignRequest.withVelocityX(xVelocity).withVelocityY(yVelocity)
         );
+
+        System.out.println(mapDistanceToVelocity(currentPos.getY() - targetPos.getY()));
     }
 
     @Override
     public boolean isFinished() {
-        //Pose2d currentPos = new Pose2d(limelight.getTX(),limelight.getTY(), Rotation2d.fromDegrees(limelight.getRZ()));
+        double distanceToTarget = Math.hypot(
+            limelight.botPose.getX() - targetPos.getX(),
+            limelight.botPose.getY() - targetPos.getY()
+        );
 
-        if (Math.abs(limelight.getTX() - targetPos.getX()) < 0.1 && Math.abs(limelight.getTY() - targetPos.getY()) < 0.1) {
-            return true;
-        }
-
-        return false;
+        return distanceToTarget < 0.1;
     }
 
     @Override

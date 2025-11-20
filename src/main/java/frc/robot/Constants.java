@@ -47,7 +47,12 @@ public class Constants {
         public static final double ationPositionOutake = 0.33349609375;
     }
 
-    public static class Elevator {
+    public static class ElevatorConstants {
+
+        public static final int motorID = 30;
+        public static final int followerMotorID = 31;
+        public static final int encoder = 33;
+
         public static final double magnetSensorOffset = 0.599609375;
         public static final double currentLimit = 40;
         // l4
@@ -91,7 +96,9 @@ public class Constants {
         public static final double minRotationsWithArmScoring = -0.7934326171875;
     }
 
-    public static class ArmPivot {
+    public static class ArmPivotConstants {
+        public static final int motorID = 32;
+        public static final int encoderID = 34;
         // PID and feedforward
         public static final double upKP = 8.88268699; // 25 // 23 // 13
         public static final double upKI = 0;

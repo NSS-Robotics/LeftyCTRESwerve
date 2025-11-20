@@ -40,8 +40,8 @@ public class RobotContainer {
     // public final Indexer indexer = new Indexer();
     // public final Intake intake = new Intake(this);
     // public final IntakePivot intakePivot = new IntakePivot(this);
-    // public final ArmPivot armPivot = new ArmPivot(this);
-    // public final Elevator elevator = new Elevator(this);
+    public final ArmPivot armPivot = new ArmPivot(this);
+    public final Elevator elevator = new Elevator(this);
 
     // Variables
     public boolean isCoral = true;
@@ -82,7 +82,7 @@ public class RobotContainer {
         // zero gyro
         driverController.y().onTrue(new InstantCommand(() -> drivetrain.seedFieldCentric()));
 
-        driverController.a().onTrue(new Align(this));
+        driverController.a().whileTrue(new Align(this));
     }
 
     public Command getAutonomousCommand() {

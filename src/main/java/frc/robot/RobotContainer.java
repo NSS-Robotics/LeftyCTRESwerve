@@ -47,6 +47,8 @@ public class RobotContainer {
     public boolean isCoral = true;
 
     public RobotContainer() {
+        CameraServer.startAutomaticCapture();
+
         configureBindings();
     }
 

@@ -73,12 +73,12 @@ public class Elevator extends SubsystemBase {
     motor.getConfigurator().apply(slot0Configs);
     motor.getConfigurator().apply(slot1Configs);
     motor.getConfigurator().apply(currentLimitsConfigs);
-    motor.setNeutralMode(NeutralModeValue.Coast);
+    motor.setNeutralMode(NeutralModeValue.Brake);
     followerMotor.getConfigurator().apply(motorConfig);
     followerMotor.getConfigurator().apply(slot0Configs);
     followerMotor.getConfigurator().apply(slot1Configs);
     followerMotor.getConfigurator().apply(currentLimitsConfigs);
-    followerMotor.setNeutralMode(NeutralModeValue.Coast);
+    followerMotor.setNeutralMode(NeutralModeValue.Brake);
 
     followerMotor.setControl(new Follower(Constants.ElevatorConstants.motorID, true));
   }

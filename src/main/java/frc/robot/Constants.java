@@ -121,8 +121,7 @@ public class Constants {
             0, // l1
             -0.894287109375, // algaeReefHigh
             -0.894287109375, // algaeReefLow
-            // -1.949951171875, // barge   // barge backward -2.963134765625
-            -1.4, // high five position for faculty follies
+            -1.949951171875, // barge   // barge backward -2.963134765625
             0, // processor
             -0.48037109375, // algaeGround
             0 // climb
@@ -132,6 +131,10 @@ public class Constants {
         public static final double minRotations = -2.19384765625;
         public static final double horizontal = -0.894287109375;
         public static final double maxRotations = 0.546630859375;        
+    }
+
+    public static class Vision {
+        public static final double maxAmbiguity = 0.7;
     }
 
     public static class CanIDs {

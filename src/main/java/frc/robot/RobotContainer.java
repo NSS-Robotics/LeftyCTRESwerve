@@ -7,15 +7,13 @@ package frc.robot;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.Align;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.*;
@@ -36,7 +34,7 @@ public class RobotContainer {
 
     // Subsystems
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
-    public final Limelight limelight = new Limelight("front");
+    public final Limelight limelight = new Limelight("front", drivetrain);
     // public final Indexer indexer = new Indexer();
     // public final Intake intake = new Intake(this);
     // public final IntakePivot intakePivot = new IntakePivot(this);
@@ -83,7 +81,7 @@ public class RobotContainer {
 
         // zero gyro
         driverController.y().onTrue(new InstantCommand(() -> drivetrain.seedFieldCentric()));
-
+        driverController.y().onTrue(new InstantCommand(() -> elevator.seedFieldCentric()));
         driverController.a().whileTrue(new Align(this));
     }
 

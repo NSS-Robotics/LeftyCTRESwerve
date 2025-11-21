@@ -241,6 +241,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
         SmartDashboard.putNumber("Position X", getPoseMeters().getX());
         SmartDashboard.putNumber("Position Y", getPoseMeters().getY());
+        SmartDashboard.putNumber("Position R", getPoseMeters().getRotation().getDegrees());
     }
 
     private void startSimThread() {

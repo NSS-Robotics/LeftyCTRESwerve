@@ -102,11 +102,11 @@ public class Limelight extends SubsystemBase {
 
     @Override
     public void periodic() {
-        updateLimelightTracking();
-        updateOdometry();
+        //updateLimelightTracking();
+        //updateOdometry();
 
-        SmartDashboard.putNumber("LL X", botPose.getX());
-        SmartDashboard.putNumber("LL Y", botPose.getY());
-        SmartDashboard.putNumber("LL R", botPose.getRotation().getDegrees());
+        //SmartDashboard.putNumber("LL X", botPose.getX());
+        //SmartDashboard.putNumber("LL Y", botPose.getY());
+        //SmartDashboard.putNumber("LL R", botPose.getRotation().getDegrees());
     }
 }

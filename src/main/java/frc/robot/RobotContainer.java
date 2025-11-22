@@ -82,8 +82,8 @@ public class RobotContainer {
         // driverController.start().and(driverController.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
         // zero gyro
-        driverController.y().onTrue(new InstantCommand(() -> drivetrain.seedFieldCentric()));
-        driverController.b().onTrue(new Scoring(this));
+        //driverController.y().onTrue(new InstantCommand(() -> drivetrain.seedFieldCentric()));
+        driverController.x().onTrue(new Scoring(this));
         driverController.a().whileTrue(new Align(this));
     }
 

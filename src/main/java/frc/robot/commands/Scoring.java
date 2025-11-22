@@ -1,6 +1,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
@@ -21,17 +22,19 @@ public class Scoring extends Command{
 
     // Called when the command is initially scheduled.
     @Override
-    public void initialize() {}
+    public void initialize() {
+        SmartDashboard.putString("Scoring", "True");
+
+    }
 
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
         // l_led.ationIntake();
         // m_elevator.setPosition(1.1);
-        elevator.setPosition(4.147998046875);
-        Timer.delay(1);
-        armPivot.setPosition(-1.95751953125);
-        
+        //elevator.setPosition(4.147998046875);
+        //Timer.delay(1);
+        //armPivot.setPosition(-1.95751953125);        
         //m_armPivot.setPosition(Constants.ArmPivotConstants.pos[state.ordinal()]);
       
         // m_elevator.setPosition(Constants.ElevatorConstants.pos[state.ordinal()])
@@ -40,8 +43,8 @@ public class Scoring extends Command{
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
-        elevator.stop();
-        armPivot.stop();
+        //elevator.stop();
+        //armPivot.stop();
 
     }
 }

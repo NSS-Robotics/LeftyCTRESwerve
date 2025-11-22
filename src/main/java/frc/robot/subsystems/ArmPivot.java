@@ -78,7 +78,7 @@ public class ArmPivot extends SubsystemBase {
     motor.getConfigurator().apply(slot0Configs);
     // motor.getConfigurator().apply(slot1Configs);
     motor.getConfigurator().apply(currentLimitsConfigs);
-    motor.setNeutralMode(NeutralModeValue.Coast);
+    motor.setNeutralMode(NeutralModeValue.Brake);
   }
 
   public void setPosition(double position) {

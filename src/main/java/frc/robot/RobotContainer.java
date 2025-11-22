@@ -15,6 +15,8 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import frc.robot.commands.Align;
+import frc.robot.commands.ElevatorUp;
+import frc.robot.commands.Scoring;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.*;
 
@@ -81,7 +83,7 @@ public class RobotContainer {
 
         // zero gyro
         driverController.y().onTrue(new InstantCommand(() -> drivetrain.seedFieldCentric()));
-        driverController.y().onTrue(new InstantCommand(() -> elevator.seedFieldCentric()));
+        driverController.b().onTrue(new Scoring(this));
         driverController.a().whileTrue(new Align(this));
     }
 

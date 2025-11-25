@@ -30,7 +30,15 @@ public class Align extends Command {
     @Override
     public void initialize() {
 
-        Pose2d fieldTarget = new Pose2d(13.88, 5.211, Rotation2d.fromDegrees(65));
+        Pose2d fieldTarget = new Pose2d(
+            // APRIL TAG 8
+            // 13.88,
+            // 5.211,
+            // Rotation2d.fromDegrees(65)
+            11.4,
+            4.1,
+            Rotation2d.fromDegrees(180)
+        );
 
         currentPos = swerve.getPoseMeters();
         // This is for when the limelight does NOT update the swerve odometry
@@ -43,7 +51,7 @@ public class Align extends Command {
     }
 
     public double mapDistanceToVelocity(double distance) {
-        final double maxVel = 1;
+        final double maxVel = 2.5;
         final double minVel = 0.05;
 
         distance = Math.abs(distance);
@@ -109,8 +117,8 @@ public class Align extends Command {
     @Override
     public boolean isFinished() {
         double distanceToTarget = Math.hypot(
-            limelight.botPose.getX() - targetPos.getX(),
-            limelight.botPose.getY() - targetPos.getY()
+            swerve.getPoseMeters().getX() - targetPos.getX(),
+            swerve.getPoseMeters().getY() - targetPos.getY()
         );
 
         return distanceToTarget < 0.2;

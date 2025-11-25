@@ -26,15 +26,9 @@ public class Scoring extends Command{
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-        // l_led.ationIntake();
-        // m_elevator.setPosition(1.1);
         elevator.setPosition(4.147998046875);
         Timer.delay(1);
         armPivot.setPosition(-1.95751953125);
-        
-        //m_armPivot.setPosition(Constants.ArmPivotConstants.pos[state.ordinal()]);
-      
-        // m_elevator.setPosition(Constants.ElevatorConstants.pos[state.ordinal()])
     }
 
     // Called once the command ends or is interrupted.

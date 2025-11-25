@@ -12,7 +12,6 @@ import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
-import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 
@@ -27,7 +26,6 @@ public class Elevator extends SubsystemBase {
   private final CANcoder encoder = new CANcoder(Constants.ElevatorConstants.encoder);
 
   private PositionVoltage pv = new PositionVoltage(0).withSlot(0);
-  private VelocityVoltage vv;
 
   // Motor configuration
   private TalonFXConfiguration motorConfig;
@@ -53,13 +51,13 @@ public class Elevator extends SubsystemBase {
     slot0Configs.kV = Constants.ElevatorConstants.upKV;
     slot0Configs.kA = Constants.ElevatorConstants.upKA;
 
-    slot1Configs = new Slot1Configs();
-    slot1Configs.kP = Constants.ElevatorConstants.downKP;
-    slot1Configs.kI = Constants.ElevatorConstants.downKI;
-    slot1Configs.kD = Constants.ElevatorConstants.downKD;
-    slot1Configs.kS = Constants.ElevatorConstants.downKS;
-    slot1Configs.kV = Constants.ElevatorConstants.downKV;
-    slot1Configs.kA = Constants.ElevatorConstants.downKA;
+    // slot1Configs = new Slot1Configs();
+    // slot1Configs.kP = Constants.ElevatorConstants.downKP;
+    // slot1Configs.kI = Constants.ElevatorConstants.downKI;
+    // slot1Configs.kD = Constants.ElevatorConstants.downKD;
+    // slot1Configs.kS = Constants.ElevatorConstants.downKS;
+    // slot1Configs.kV = Constants.ElevatorConstants.downKV;
+    // slot1Configs.kA = Constants.ElevatorConstants.downKA;
 
     motorConfig = new TalonFXConfiguration();
     motorConfig.Feedback.FeedbackRemoteSensorID = encoder.getDeviceID();
@@ -71,28 +69,25 @@ public class Elevator extends SubsystemBase {
 
     motor.getConfigurator().apply(motorConfig);
     motor.getConfigurator().apply(slot0Configs);
-    motor.getConfigurator().apply(slot1Configs);
+    // motor.getConfigurator().apply(slot1Configs);
     motor.getConfigurator().apply(currentLimitsConfigs);
     motor.setNeutralMode(NeutralModeValue.Brake);
     followerMotor.getConfigurator().apply(motorConfig);
     followerMotor.getConfigurator().apply(slot0Configs);
-    followerMotor.getConfigurator().apply(slot1Configs);
+    // followerMotor.getConfigurator().apply(slot1Configs);
     followerMotor.getConfigurator().apply(currentLimitsConfigs);
     followerMotor.setNeutralMode(NeutralModeValue.Brake);
 
     followerMotor.setControl(new Follower(Constants.ElevatorConstants.motorID, true));
   }
 
-  public void setPosition(double position) {
-    int slot = 0; // Assume elevator is going up.
-
-    if (getEncoder() > position) {
-      // If it's going down, use down PID values.
-      slot = 1;
+  public void setPosition(double targetPos) {
+    double rps = 20;
+    if (getEncoder() > targetPos) {
+      rps = -rps;
     }
 
-    // Use the PID values for the direction the elevator is going.
-    pv = new PositionVoltage(position).withSlot(slot);
+    pv = new PositionVoltage(targetPos).withVelocity(rps);
     motor.setControl(pv);
   }
 

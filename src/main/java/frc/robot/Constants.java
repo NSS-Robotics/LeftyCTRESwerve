@@ -95,14 +95,65 @@ public class Constants {
         public static final double minRotationsWithArmIn = -0.27919921875;
         public static final double minRotationsWithArmScoring = -0.7934326171875;
     }
+    public static class IntakeConstants{
+        public static final int pivotMotorID = 40;
+        public static final int intakeMotorID = 41;
+        public static final int encoderID = 42;
 
+        public static final double intakeKP = 1.9006E-31;
+        public static final double intakeKI = 0;
+        public static final double intakeKD = 0;
+        public static final double intakeKS = -0.0098585;
+        public static final double intakeKV = 1.0013;
+        public static final double intakeKA = 0.0092053;
+        public static final double upKP = 0.16413;
+        public static final double upKI = 0;
+        public static final double upKD = 0;
+        public static final double downKP = 8.25;
+        public static final double downKI = 0;
+        public static final double downKD = 0;
+        public static final double kG = 0;
+        public static final double pivotMaxRotations = 1.3;
+        public static final double intakeStartPos = 0.0927734375;
+        public static final double algaePosition = 0;
+        public static final double upPosition = 0.438;
+        public static final double algaeIntake = -0.142822265625;
+        public static final double velocity = 540;
+        public static final double stationVelocity = 50;
+        public static final double halfIntakeVelocity = 3000;
+        public static final double l1velocity = 1000;
+        public static final double ationPositionIntake= 0.365478515625;
+        public static final double ationPositionOutake = 0.33349609375;
+    }
+
+    public static final class ClawConstants {
+        public static final double kP = 1.7238E-9;
+        public static final double kI = 0;
+        public static final double kD = 0;
+        public static final double kS = -0.024461;
+        public static final double kV = 1.0008;
+        public static final double kA = 0.0254;
+        public static final double currentLimit = 55; // That's a very small current limit
+        public static final int motorID = 60;
+        public static final int laserCANID = 61;
+        public static final double intakePosition = 0.49;
+        public static final double teleopOuttakeVelocity = 1;
+    }
+ public static final class IndexerConstants {
+
+        public static final int motorID = 50;
+        public static final int laserCANID = 51;
+        public static final int coralHolderLaserCANID = 52;
+        public static final double velocity = -0.45;
+        public static final double halfIntakeVelocity = 0.2;
+    }
     public static class ArmPivotConstants {
         public static final int motorID = 32;
         public static final int encoderID = 34;
         // PID and feedforward
-        public static final double upKP = 8.88268699; // 25 // 23 // 13
+        public static final double upKP = 8.88268699;
         public static final double upKI = 0;
-        public static final double upKD = 0.18; // 0.001
+        public static final double upKD = 0.18;
         public static final double downKP = 2.58068699;
         public static final double downKI = 0;
         public static final double downKD = 0.1;

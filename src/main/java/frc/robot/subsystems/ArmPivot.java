@@ -10,7 +10,6 @@ import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.Slot1Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
-import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -29,7 +28,6 @@ public class ArmPivot extends SubsystemBase {
   private final CANcoder encoder = new CANcoder(Constants.ArmPivotConstants.encoderID);
 
   private PositionVoltage pv = new PositionVoltage(0).withSlot(0);
-  private VelocityVoltage vv;
   private final RobotContainer rob;
 
   // Motor configuration
@@ -76,20 +74,20 @@ public class ArmPivot extends SubsystemBase {
 
     motor.getConfigurator().apply(motorConfig);
     motor.getConfigurator().apply(slot0Configs);
-    // motor.getConfigurator().apply(slot1Configs);
+    motor.getConfigurator().apply(slot1Configs);
     motor.getConfigurator().apply(currentLimitsConfigs);
     motor.setNeutralMode(NeutralModeValue.Brake);
   }
 
-  public void setPosition(double position) {
-    // int slot = 1; // Default to assuming arm is going down.
+  public void setPosition(double targetPos) {
+    int slot = 1; // Default to assuming arm is going down.
 
-    // if (getEncoder() < position) {
-    //   // If arm is going up, use up PID.
-    //   slot = 0;
-    // }
+    if (getEncoder() < targetPos) {
+      // If arm is going up, use up PID.
+      slot = 0;
+    }
 
-    pv = new PositionVoltage(position);//.withSlot(slot);
+    pv = new PositionVoltage(targetPos).withSlot(slot);
     motor.setControl(pv);
   }
 

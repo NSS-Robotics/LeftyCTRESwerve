@@ -2,6 +2,10 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
+
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 
 import frc.robot.generated.TunerConstants;
@@ -61,7 +65,7 @@ public class Constants {
         public static final double upL4KD = 0;
         //l3,2,1
     
-        public static final double upKP = 28.5014116;
+        public static final double upKP = 12.5014116; // 28.
         public static final double upKI = 0;
         public static final double upKD = 0.0004;
         public static final double upKS = 0.0042197;
@@ -77,9 +81,9 @@ public class Constants {
 
         public static final double[] pos = {
             // ELEVATOR
-            -0.39, // start  
-            0, // coralIntake
-            3.8212890625, // l4
+            0.7, // start  
+            -0.488037109375, // coralIntake
+            3.78466796875, // l4
             0.426513671875, // l3
             -1.95595703125, // l2
             0, // l1
@@ -118,7 +122,7 @@ public class Constants {
         public static final double algaePosition = 0;
         public static final double upPosition = 0.438;
         public static final double algaeIntake = -0.142822265625;
-        public static final double velocity = 540;
+        public static final double velocity = 400; // was 540
         public static final double stationVelocity = 50;
         public static final double halfIntakeVelocity = 3000;
         public static final double l1velocity = 1000;
@@ -154,9 +158,10 @@ public class Constants {
         public static final double upKP = 8.88268699;
         public static final double upKI = 0;
         public static final double upKD = 0.18;
-        public static final double downKP = 2.58068699;
+        public static final double downKP = 4.2;
         public static final double downKI = 0;
         public static final double downKD = 0.1;
+        public static final double scoreKP = 16.5;
         public static final double kS = -0.059677;
         public static final double kV = 1.0622;
         public static final double kA = 0.025171;
@@ -186,6 +191,20 @@ public class Constants {
 
     public static class Vision {
         public static final double maxAmbiguity = 0.7;
+    }
+
+    public static class AlignPositions {
+        public static final Pose2d tag10L = new Pose2d(
+            11.603828360752374,
+            4.146816977231916,
+            Rotation2d.fromDegrees(4.517236898853531)
+        );
+        public static final Pose2d tag10R = new Pose2d(
+            11.833549038543892,
+            3.8080742362798617,
+            Rotation2d.fromDegrees(180)
+            // Rotation2d.fromDegrees(3.8264360210099335)
+        );
     }
 
     public static class CanIDs {

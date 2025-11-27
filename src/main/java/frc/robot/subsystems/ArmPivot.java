@@ -8,6 +8,7 @@ import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.Slot1Configs;
+import com.ctre.phoenix6.configs.Slot2Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
@@ -32,8 +33,9 @@ public class ArmPivot extends SubsystemBase {
 
   // Motor configuration
   private TalonFXConfiguration motorConfig;
-  private Slot0Configs slot0Configs;
-  private Slot1Configs slot1Configs;
+  private Slot0Configs upPIDConfigs;
+  private Slot1Configs downPIDConfigs;
+  private Slot2Configs scorePIDConfigs;
   private CANcoderConfiguration canCoderConfig;
   private CurrentLimitsConfigs currentLimitsConfigs;
   
@@ -44,25 +46,34 @@ public class ArmPivot extends SubsystemBase {
 
     this.rob = robert;
 
-    slot0Configs = new Slot0Configs();
-    slot0Configs.kP = Constants.ArmPivotConstants.upKP;
-    slot0Configs.kI = Constants.ArmPivotConstants.upKI;
-    slot0Configs.kD = Constants.ArmPivotConstants.upKD;
-    slot0Configs.kS = Constants.ArmPivotConstants.kS;
-    slot0Configs.kV = Constants.ArmPivotConstants.kV;
-    slot0Configs.kA = Constants.ArmPivotConstants.kA;
-    slot0Configs.GravityType = GravityTypeValue.Arm_Cosine;
-    slot0Configs.kG = Constants.ArmPivotConstants.kG;
+    upPIDConfigs = new Slot0Configs();
+    upPIDConfigs.kP = Constants.ArmPivotConstants.upKP;
+    upPIDConfigs.kI = Constants.ArmPivotConstants.upKI;
+    upPIDConfigs.kD = Constants.ArmPivotConstants.upKD;
+    upPIDConfigs.kS = Constants.ArmPivotConstants.kS;
+    upPIDConfigs.kV = Constants.ArmPivotConstants.kV;
+    upPIDConfigs.kA = Constants.ArmPivotConstants.kA;
+    upPIDConfigs.GravityType = GravityTypeValue.Arm_Cosine;
+    upPIDConfigs.kG = Constants.ArmPivotConstants.kG;
 
-    slot1Configs = new Slot1Configs();
-    slot1Configs.kP = Constants.ArmPivotConstants.downKP;
-    slot1Configs.kI = Constants.ArmPivotConstants.downKI;
-    slot1Configs.kD = Constants.ArmPivotConstants.downKD;
-    slot1Configs.kS = Constants.ArmPivotConstants.kS;
-    slot1Configs.kV = Constants.ArmPivotConstants.kV;
-    slot1Configs.kA = Constants.ArmPivotConstants.kA;
-    slot1Configs.GravityType = GravityTypeValue.Arm_Cosine;
-    slot1Configs.kG = Constants.ArmPivotConstants.kG;
+    downPIDConfigs = new Slot1Configs();
+    downPIDConfigs.kP = Constants.ArmPivotConstants.downKP;
+    downPIDConfigs.kI = Constants.ArmPivotConstants.downKI;
+    downPIDConfigs.kD = Constants.ArmPivotConstants.downKD;
+    downPIDConfigs.kS = Constants.ArmPivotConstants.kS;
+    downPIDConfigs.kV = Constants.ArmPivotConstants.kV;
+    downPIDConfigs.kA = Constants.ArmPivotConstants.kA;
+    downPIDConfigs.GravityType = GravityTypeValue.Arm_Cosine;
+    downPIDConfigs.kG = Constants.ArmPivotConstants.kG;
+
+    scorePIDConfigs = new Slot2Configs();
+    scorePIDConfigs.kP = Constants.ArmPivotConstants.scoreKP;
+    scorePIDConfigs.kI = Constants.ArmPivotConstants.downKI;
+    scorePIDConfigs.kD = Constants.ArmPivotConstants.downKD;
+    scorePIDConfigs.kS = Constants.ArmPivotConstants.kS;
+    scorePIDConfigs.kV = Constants.ArmPivotConstants.kV;
+    scorePIDConfigs.kA = Constants.ArmPivotConstants.kA;
+    scorePIDConfigs.GravityType = GravityTypeValue.Arm_Cosine;
 
     motorConfig = new TalonFXConfiguration();
     motorConfig.Feedback.FeedbackRemoteSensorID = encoder.getDeviceID();
@@ -73,18 +84,23 @@ public class ArmPivot extends SubsystemBase {
     currentLimitsConfigs.StatorCurrentLimitEnable = true;
 
     motor.getConfigurator().apply(motorConfig);
-    motor.getConfigurator().apply(slot0Configs);
-    motor.getConfigurator().apply(slot1Configs);
+    motor.getConfigurator().apply(upPIDConfigs);
+    motor.getConfigurator().apply(downPIDConfigs);
+    motor.getConfigurator().apply(scorePIDConfigs);
     motor.getConfigurator().apply(currentLimitsConfigs);
     motor.setNeutralMode(NeutralModeValue.Brake);
   }
 
-  public void setPosition(double targetPos) {
+  public void setPosition(double targetPos, boolean isScoring) {
     int slot = 1; // Default to assuming arm is going down.
 
-    if (getEncoder() < targetPos) {
+    if (getEncoder() > targetPos) {
       // If arm is going up, use up PID.
       slot = 0;
+    }
+
+    if (isScoring) {
+      slot = 2;
     }
 
     pv = new PositionVoltage(targetPos).withSlot(slot);

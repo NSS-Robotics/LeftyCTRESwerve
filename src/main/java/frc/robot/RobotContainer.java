@@ -8,16 +8,18 @@ import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import frc.robot.commands.Align;
-import frc.robot.commands.ClawOuttake;
-import frc.robot.commands.Scoring;
+import frc.robot.commands.IntakeGround;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.*;
 
@@ -85,12 +87,12 @@ public class RobotContainer {
             .onTrue(
                 new SequentialCommandGroup(
                     // reset all to home position
-                    new InstantCommand(() -> elevator.setPosition(0.8)),
+                    new InstantCommand(() -> armPivot.setPosition(Constants.ArmPivotConstants.pos[RobotState.start.ordinal()], false)),
                     new WaitCommand(1),
-                    new InstantCommand(() -> armPivot.setPosition(Constants.ArmPivotConstants.pos[RobotState.start.ordinal()]))
+                    new InstantCommand(() -> elevator.setPosition(0.8))
                 )
             );
-        
+
         driverController
             .leftTrigger()
             .onTrue(
@@ -98,11 +100,49 @@ public class RobotContainer {
                     // score algae in barge
                     new InstantCommand(() -> elevator.setPosition(Constants.ElevatorConstants.pos[RobotState.barge.ordinal()])),
                     new WaitCommand(0.2),
-                    new InstantCommand(() -> armPivot.setPosition(Constants.ArmPivotConstants.pos[RobotState.barge.ordinal()]))
+                    new InstantCommand(() -> armPivot.setPosition(Constants.ArmPivotConstants.pos[RobotState.barge.ordinal()], false))
                 )
             );
 
-        driverController.a().whileTrue(new Align(this));
+        driverController.rightBumper().whileTrue(new IntakeGround(this));
+        driverController.povUp().onTrue(new InstantCommand(() -> elevator.setPosition(Constants.ElevatorConstants.pos[RobotState.l4.ordinal()])));
+        driverController.povDown().onTrue(new InstantCommand(() -> elevator.setPosition(Constants.ElevatorConstants.pos[RobotState.start.ordinal()])));
+
+        driverController.b().onTrue(
+            new SequentialCommandGroup(
+                    // score l4
+                    new InstantCommand(() -> elevator.setPosition(Constants.ElevatorConstants.pos[RobotState.coralIntake.ordinal()])),
+                    new InstantCommand(() -> claw.makeMotorSpin(-0.4)),
+                    new WaitCommand(1), // TODO: make WaitUntilCommand
+                    new InstantCommand(() -> claw.makeMotorSpin(-0.07)),
+                    new InstantCommand(() -> elevator.setPosition(Constants.ElevatorConstants.pos[RobotState.l4.ordinal()])),
+                    new WaitCommand(1),
+                    new InstantCommand(() -> armPivot.setPosition(-1.95751953125, false))
+            )
+        );
+
+        driverController.x().onTrue(
+            new SequentialCommandGroup(
+                new InstantCommand(() -> claw.setBrakeMode(false)),
+                new InstantCommand(() -> armPivot.setPosition(-0.98, true)),
+                new WaitCommand(1),
+                new InstantCommand(() -> claw.setBrakeMode(true))
+            )
+        );
+
+        driverController.leftBumper().whileTrue(
+            new Align(
+                    this,
+                    new Pose2d(
+                        Constants.AlignPositions.tag10R.getX(),
+                        Constants.AlignPositions.tag10R.getY(),
+                        Constants.AlignPositions.tag10R.getRotation()
+                    ),
+                    0.02
+                )
+        );
+
+        driverController.a().whileTrue(new Align(this, new Pose2d(11.4, 4.1, Rotation2d.fromDegrees(180)), 0.1));
     }
 
     public Command getAutonomousCommand() {

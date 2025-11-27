@@ -42,6 +42,7 @@ public class Elevator extends SubsystemBase {
     canCoderConfig = new CANcoderConfiguration();
     canCoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.Clockwise_Positive;
     encoder.getConfigurator().apply(canCoderConfig);
+    encoder.setPosition(encoder.getAbsolutePosition().getValueAsDouble());
 
     slot0Configs = new Slot0Configs();
     slot0Configs.kP = Constants.ElevatorConstants.upKP;
@@ -51,13 +52,13 @@ public class Elevator extends SubsystemBase {
     slot0Configs.kV = Constants.ElevatorConstants.upKV;
     slot0Configs.kA = Constants.ElevatorConstants.upKA;
 
-    // slot1Configs = new Slot1Configs();
-    // slot1Configs.kP = Constants.ElevatorConstants.downKP;
-    // slot1Configs.kI = Constants.ElevatorConstants.downKI;
-    // slot1Configs.kD = Constants.ElevatorConstants.downKD;
-    // slot1Configs.kS = Constants.ElevatorConstants.downKS;
-    // slot1Configs.kV = Constants.ElevatorConstants.downKV;
-    // slot1Configs.kA = Constants.ElevatorConstants.downKA;
+    slot1Configs = new Slot1Configs();
+    slot1Configs.kP = Constants.ElevatorConstants.downKP;
+    slot1Configs.kI = Constants.ElevatorConstants.downKI;
+    slot1Configs.kD = Constants.ElevatorConstants.downKD;
+    slot1Configs.kS = Constants.ElevatorConstants.downKS;
+    slot1Configs.kV = Constants.ElevatorConstants.downKV;
+    slot1Configs.kA = Constants.ElevatorConstants.downKA;
 
     motorConfig = new TalonFXConfiguration();
     motorConfig.Feedback.FeedbackRemoteSensorID = encoder.getDeviceID();
@@ -69,12 +70,12 @@ public class Elevator extends SubsystemBase {
 
     motor.getConfigurator().apply(motorConfig);
     motor.getConfigurator().apply(slot0Configs);
-    // motor.getConfigurator().apply(slot1Configs);
+    motor.getConfigurator().apply(slot1Configs);
     motor.getConfigurator().apply(currentLimitsConfigs);
     motor.setNeutralMode(NeutralModeValue.Brake);
     followerMotor.getConfigurator().apply(motorConfig);
     followerMotor.getConfigurator().apply(slot0Configs);
-    // followerMotor.getConfigurator().apply(slot1Configs);
+    followerMotor.getConfigurator().apply(slot1Configs);
     followerMotor.getConfigurator().apply(currentLimitsConfigs);
     followerMotor.setNeutralMode(NeutralModeValue.Brake);
 
@@ -82,12 +83,12 @@ public class Elevator extends SubsystemBase {
   }
 
   public void setPosition(double targetPos) {
-    double rps = 20;
+    int slot = 0;
     if (getEncoder() > targetPos) {
-      rps = -rps;
+      slot = 1;
     }
 
-    pv = new PositionVoltage(targetPos).withVelocity(rps);
+    pv = new PositionVoltage(targetPos).withSlot(slot);
     motor.setControl(pv);
   }
 
@@ -128,6 +129,6 @@ public class Elevator extends SubsystemBase {
     SmartDashboard.putNumber("Elevator Rotations", getEncoder());
     SmartDashboard.putNumber("Elevator Velocity", getVelocity());
     SmartDashboard.putNumber("Elevator Current", motor.getStatorCurrent().getValueAsDouble());
-   SmartDashboard.putBoolean("Elevator can move", canMove());
+    SmartDashboard.putBoolean("Elevator can move", canMove());
   }
 }

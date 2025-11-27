@@ -20,11 +20,15 @@ public class Align extends Command {
     private final SwerveRequest.FieldCentricFacingAngle alignRequest = new SwerveRequest.FieldCentricFacingAngle();
 
     private Pose2d currentPos;
-    private Pose2d targetPos;
-    //headingcontroller.enableContinuousInput();
-    public Align(RobotContainer rob) {
+    private final Pose2d targetPos;
+
+    private final double deadZone;
+
+    public Align(RobotContainer rob, Pose2d targetPos, double deadband) {
         this.swerve = rob.drivetrain;
         this.limelight = rob.limelight;
+        this.targetPos = targetPos;
+        this.deadZone = deadband;
     }
 
     @Override
@@ -35,8 +39,9 @@ public class Align extends Command {
             // 13.88,
             // 5.211,
             // Rotation2d.fromDegrees(65)
-            11.4,
-            4.1,
+            // APRIL TAG 10
+            11.220275005276687,
+            3.8989204767003915,
             Rotation2d.fromDegrees(180)
         );
 
@@ -47,12 +52,11 @@ public class Align extends Command {
         //     swerve.getPoseMeters().getY() + (limelight.botPose.getY() - fieldTarget.getY()),
         //     Rotation2d.fromDegrees(swerve.getPigeon2().getYaw().getValueAsDouble())
         // );
-        targetPos = fieldTarget;
     }
 
     public double mapDistanceToVelocity(double distance) {
         final double maxVel = 2.5;
-        final double minVel = 0.05;
+        final double minVel = 0.08;
 
         distance = Math.abs(distance);
         if (distance > 1) distance = 1;
@@ -69,9 +73,6 @@ public class Align extends Command {
         double xVelocity = 0;
         double yVelocity = 0;
       //  double radianVelocity = headingController.calculate(currentPos.getRotation().getRadians(), targetPos.getRotation().getRadians(),Timer.getFPGATimestamp());
-        double deadZone = 0.1;
-        double autoDeadZone= 0.25;
-        double angleDeadZone = 2;
 
         currentPos = swerve.getPoseMeters();
 
@@ -104,14 +105,12 @@ public class Align extends Command {
             alignRequest
                 .withVelocityX(xVelocity)
                 .withVelocityY(yVelocity)
-                .withDeadband(autoDeadZone)
+                .withDeadband(deadZone)
                 .withHeadingPID(1,0,0.1)
                 .withTargetDirection(targetPos.getRotation())
                 // .withMaxAbsRotationalRate(0.2)
               //  .withTargetRateFeedforward(Units.degreesToRadians(36))
         );
-
-        System.out.println(mapDistanceToVelocity(currentPos.getY() - targetPos.getY()));
     }
 
     @Override

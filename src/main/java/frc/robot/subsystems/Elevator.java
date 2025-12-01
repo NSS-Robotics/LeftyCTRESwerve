@@ -24,9 +24,11 @@ public class Elevator extends SubsystemBase {
   private final TalonFX motor = new TalonFX(Constants.ElevatorConstants.motorID);
   private final TalonFX followerMotor = new TalonFX(Constants.ElevatorConstants.followerMotorID);
   private final CANcoder encoder = new CANcoder(Constants.ElevatorConstants.encoder);
-
+ 
   private PositionVoltage pv = new PositionVoltage(0).withSlot(0);
-
+  private double slot0TuneP =0;
+  private double slot0TuneI =0;
+  private double slot0TuneD =0;
   // Motor configuration
   private TalonFXConfiguration motorConfig;
   private Slot0Configs slot0Configs;
@@ -124,7 +126,34 @@ public class Elevator extends SubsystemBase {
   public void periodic() {
     // if (!canMove()) {
     //     stop();
-    // }
+    // 
+    slot0TuneP = SmartDashboard.getNumber("Slot 0 P", 0);
+    SmartDashboard.putNumber("Slot 0 P", slot0TuneP);
+    slot0TuneI = SmartDashboard.getNumber("Slot 0 I", 0);
+    SmartDashboard.putNumber("Slot 0 I", slot0TuneI);
+    slot0TuneD = SmartDashboard.getNumber("Slot 0 D", 0);
+    SmartDashboard.putNumber("Slot 0 D", slot0TuneD);
+    
+    boolean isChanged = false;
+
+    if(slot0TuneP != slot0Configs.kP){
+    slot0Configs.kP = slot0TuneP;
+    isChanged = true; 
+    }
+
+    if(slot0TuneI != slot0Configs.kI){
+    slot0Configs.kI = slot0TuneI;
+    isChanged = true;
+    }
+
+    if(slot0TuneD != slot0Configs.kD){
+    slot0Configs.kD = slot0TuneD;
+    isChanged = true;
+    }
+
+    if(isChanged){
+      motor.getConfigurator().apply(slot0Configs);
+    }
 
     SmartDashboard.putNumber("Elevator Rotations", getEncoder());
     SmartDashboard.putNumber("Elevator Velocity", getVelocity());

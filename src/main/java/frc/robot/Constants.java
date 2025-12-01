@@ -81,10 +81,10 @@ public class Constants {
 
         public static final double[] pos = {
             // ELEVATOR
-            0.7, // start  
+            1.1, // start  
             -0.488037109375, // coralIntake
             3.78466796875, // l4
-            0.426513671875, // l3
+            0.5, // l3
             -1.95595703125, // l2
             0, // l1
             3.574267578125, // algaeReefHigh
@@ -169,7 +169,7 @@ public class Constants {
 
         public static final double pos[] = {
             // ARM PIVOT
-            0.461376953125, // start
+            0.511376953125, // start
             0, // coralIntake
             -1.38427734375, // l4
             -1.9296875, // l3
@@ -195,9 +195,9 @@ public class Constants {
 
     public static class AlignPositions {
         public static final Pose2d tag10L = new Pose2d(
-            11.603828360752374,
-            4.146816977231916,
-            Rotation2d.fromDegrees(4.517236898853531)
+            11.833539369392948,
+            4.226266826312283,
+            Rotation2d.fromDegrees(180)
         );
         public static final Pose2d tag10R = new Pose2d(
             11.833549038543892,

@@ -72,7 +72,7 @@ public class Align extends Command {
 
         double xVelocity = 0;
         double yVelocity = 0;
-      //  double radianVelocity = headingController.calculate(currentPos.getRotation().getRadians(), targetPos.getRotation().getRadians(),Timer.getFPGATimestamp());
+        // double radianVelocity = headingController.calculate(currentPos.getRotation().getRadians(), targetPos.getRotation().getRadians(), Timer.getFPGATimestamp());
 
         currentPos = swerve.getPoseMeters();
 
@@ -99,14 +99,14 @@ public class Align extends Command {
 
         SmartDashboard.putNumber("X Velocity", xVelocity);
         SmartDashboard.putNumber("Y Velocity", yVelocity);
-      //  SmartDashboard.putNumber("Radian Velocity", radianVelocity);
+        // SmartDashboard.putNumber("Radian Velocity", radianVelocity);
     
         swerve.setControl(
             alignRequest
                 .withVelocityX(xVelocity)
                 .withVelocityY(yVelocity)
                 .withDeadband(deadZone)
-                .withHeadingPID(1,0,0.1)
+                .withHeadingPID(1, 0, 0.1)
                 .withTargetDirection(targetPos.getRotation())
                 // .withMaxAbsRotationalRate(0.2)
               //  .withTargetRateFeedforward(Units.degreesToRadians(36))

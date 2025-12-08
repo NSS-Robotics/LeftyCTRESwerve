@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import java.util.function.BooleanSupplier;
+
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
@@ -98,6 +100,19 @@ public class Elevator extends SubsystemBase {
     return encoder.getPosition().getValueAsDouble();
   }
 
+  public BooleanSupplier canArmMoveHome(){
+    if(encoder.getPosition().getValueAsDouble() > 1.4 && encoder.getPosition().getValueAsDouble() < 1.6){
+      return  () -> true;
+    }
+    return () -> false;
+  }
+  public BooleanSupplier canArmMoveUp(){
+    if(encoder.getPosition().getValueAsDouble() > 1.5){
+      return  () -> true;
+    }
+    return () -> false;
+  }
+
   public double getVelocity() {
     return motor.getVelocity().getValueAsDouble();
   }
@@ -151,9 +166,9 @@ public class Elevator extends SubsystemBase {
     isChanged = true;
     }
 
-    if(isChanged){
-      motor.getConfigurator().apply(slot0Configs);
-    }
+    // if(isChanged){
+    //   motor.getConfigurator().apply(slot0Configs);
+    // }
 
     SmartDashboard.putNumber("Elevator Rotations", getEncoder());
     SmartDashboard.putNumber("Elevator Velocity", getVelocity());

@@ -165,11 +165,11 @@ public class Constants {
         public static final double kS = -0.059677;
         public static final double kV = 1.0622;
         public static final double kA = 0.025171;
-        public static final double kG = 4;
+        public static final double kG = 3; // Changed on 3 decemeber from 4
 
         public static final double pos[] = {
             // ARM PIVOT
-            0.511376953125, // start
+            0.336181640625, // start
             0, // coralIntake
             -1.38427734375, // l4
             -1.9296875, // l3

@@ -5,6 +5,9 @@
 package frc.robot;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
+
+import java.util.function.BooleanSupplier;
+
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.cameraserver.CameraServer;
@@ -81,7 +84,7 @@ public class RobotContainer {
         // driverController.start().and(driverController.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
         // zero gyro
-        driverController.y().onTrue(new InstantCommand(() -> drivetrain.seedFieldCentric()));
+       // driverController.y().onTrue(new InstantCommand(() -> drivetrain.seedFieldCentric()));
 
         driverController
             .b()
@@ -90,7 +93,9 @@ public class RobotContainer {
                     // reset all to home position
                     new InstantCommand(() -> elevator.setPosition(1.5)),
                     new WaitCommand(1),
+                    //new WaitUntilCommand(()-> elevator.getEncoder() > 1.4 && elevator.getEncoder() < 1.6),
                     new InstantCommand(() -> armPivot.setPosition(Constants.ArmPivotConstants.pos[RobotState.start.ordinal()], false)),
+                 //  new InstantCommand(() -> armPivot.setPosition(0.4, false)),
                     new WaitCommand(1),
                     new InstantCommand(() -> elevator.setPosition(0.8))
                 )
@@ -124,8 +129,8 @@ public class RobotContainer {
         driverController
             .povRight()
             .onTrue(
-                new InstantCommand(() -> elevator.setPosition(3))
-        );
+                new InstantCommand(() -> elevator.setPosition(3.7))
+        );    
         driverController
             .povLeft()
             .onTrue(
@@ -162,7 +167,7 @@ public class RobotContainer {
                 new WaitCommand(1), // TODO: make WaitUntilCommand
                 new InstantCommand(() -> claw.makeMotorSpin(-0.07)),
                 new InstantCommand(() -> elevator.setPosition(Constants.ElevatorConstants.pos[RobotState.l4.ordinal()])),
-                new WaitCommand(1),
+                new WaitUntilCommand(()-> elevator.getEncoder() > 1.5),
                 new InstantCommand(() -> armPivot.setPosition(-1.95751953125, false))
             )
         );

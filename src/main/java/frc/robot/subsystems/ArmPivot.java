@@ -38,6 +38,9 @@ public class ArmPivot extends SubsystemBase {
   private Slot2Configs scorePIDConfigs;
   private CANcoderConfiguration canCoderConfig;
   private CurrentLimitsConfigs currentLimitsConfigs;
+  private double slot0TuneP = 0;
+  private double slot0TuneI = 0;
+  private double slot0TuneD = 0;
   
   public ArmPivot(RobotContainer robert) {
     canCoderConfig = new CANcoderConfiguration();
@@ -129,6 +132,64 @@ public class ArmPivot extends SubsystemBase {
     if (!isInAllowedROM) {
       // stop();
     }
+
+    slot0TuneP = SmartDashboard.getNumber("Slot 0 P Arm", 0);
+    SmartDashboard.putNumber("Slot 0 P Arm", slot0TuneP);
+    slot0TuneI = SmartDashboard.getNumber("Slot 0 I Arm", 0);
+    SmartDashboard.putNumber("Slot 0 I Arm", slot0TuneI);
+    slot0TuneD = SmartDashboard.getNumber("Slot 0 D Arm", 0);
+    SmartDashboard.putNumber("Slot 0 D Arm", slot0TuneD);
+    
+    boolean isChanged = false;
+
+    if(slot0TuneP != upPIDConfigs.kP){
+      upPIDConfigs.kP = slot0TuneP;
+    isChanged = true; 
+    }
+
+    if(slot0TuneI != upPIDConfigs.kI){
+      upPIDConfigs.kI = slot0TuneI;
+    isChanged = true;
+    }
+
+    if(slot0TuneD != upPIDConfigs.kD){
+      upPIDConfigs.kD = slot0TuneD;
+    isChanged = true;
+    }
+
+    if(isChanged){
+      motor.getConfigurator().apply(upPIDConfigs);
+    }
+
+    
+    slot0TuneP = SmartDashboard.getNumber("Slot 0 P Arm Down", 0);
+    SmartDashboard.putNumber("Slot 0 P Arm Down", slot0TuneP);
+    slot0TuneI = SmartDashboard.getNumber("Slot 0 I Arm Down", 0);
+    SmartDashboard.putNumber("Slot 0 I Arm Down", slot0TuneI);
+    slot0TuneD = SmartDashboard.getNumber("Slot 0 D Arm Down", 0);
+    SmartDashboard.putNumber("Slot 0 D Arm Down", slot0TuneD);
+    
+    boolean isChangedDown = false;
+
+    if(slot0TuneP != downPIDConfigs.kP){
+      downPIDConfigs.kP = slot0TuneP;
+    isChangedDown = true; 
+    }
+
+    if(slot0TuneI != downPIDConfigs.kI){
+      downPIDConfigs.kI = slot0TuneI;
+    isChangedDown = true;
+    }
+
+    if(slot0TuneD != downPIDConfigs.kD){
+      downPIDConfigs.kD = slot0TuneD;
+    isChangedDown = true;
+    }
+
+    if(isChangedDown){
+      motor.getConfigurator().apply(downPIDConfigs);
+    }
+
 
     SmartDashboard.putNumber("Arm Pivot Position", getEncoder());
     SmartDashboard.putNumber("Arm Pivot Velocity", getVelocity());

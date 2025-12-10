@@ -6,13 +6,15 @@ package frc.robot;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 
-import java.util.function.BooleanSupplier;
-
 import com.ctre.phoenix6.swerve.SwerveRequest;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -29,6 +31,8 @@ import frc.robot.subsystems.*;
 
 public class RobotContainer {
     private final CommandXboxController driverController = new CommandXboxController(0);
+
+    private final SendableChooser<Command> autoChooser;
 
     // Start CTRE Swerve stuff
 
@@ -54,9 +58,12 @@ public class RobotContainer {
     public boolean isCoral = true;
 
     public RobotContainer() {
+        addCommandsToPathplanner();
         CameraServer.startAutomaticCapture();
-
+        autoChooser = AutoBuilder.buildAutoChooser();
+        SmartDashboard.putData("Auto Chooser", autoChooser);
         configureBindings();
+        
     }
 
     private void configureBindings() {
@@ -225,7 +232,21 @@ public class RobotContainer {
         driverController.a().whileTrue(new Align(this, new Pose2d(11.4, 4.1, Rotation2d.fromDegrees(180)), 0.1));
     }
 
+    private void addCommandsToPathplanner() {
+        NamedCommands.registerCommand("shotgun", 
+            new SequentialCommandGroup(
+                new InstantCommand(() -> elevator.setPosition(Constants.ElevatorConstants.pos[RobotState.coralIntake.ordinal()])),
+                new InstantCommand(() -> claw.makeMotorSpin(-0.4)),
+                new WaitCommand(1), // TODO: make WaitUntilCommand
+                new InstantCommand(() -> claw.makeMotorSpin(-0.07)),
+                new InstantCommand(() -> elevator.setPosition(Constants.ElevatorConstants.pos[RobotState.l4.ordinal()])),
+                new WaitUntilCommand(()-> elevator.getEncoder() > 1.5),
+                new InstantCommand(() -> armPivot.setPosition(-1.95751953125, false))   
+            )
+        );
+    }
+
     public Command getAutonomousCommand() {
-        return Commands.print("No autonomous command configured");
+        return autoChooser.getSelected();
     }
 }

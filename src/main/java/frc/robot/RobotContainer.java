@@ -91,7 +91,7 @@ public class RobotContainer {
         // driverController.start().and(driverController.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
         // zero gyro
-       // driverController.y().onTrue(new InstantCommand(() -> drivetrain.seedFieldCentric()));
+        driverController.y().onTrue(new InstantCommand(() -> drivetrain.seedFieldCentric()));
 
         driverController
             .b()
@@ -167,17 +167,17 @@ public class RobotContainer {
                     0.02
                 )
         );
-        driverController.y().onTrue(
-            new SequentialCommandGroup(
-                new InstantCommand(() -> elevator.setPosition(Constants.ElevatorConstants.pos[RobotState.coralIntake.ordinal()])),
-                new InstantCommand(() -> claw.makeMotorSpin(-0.4)),
-                new WaitCommand(1), // TODO: make WaitUntilCommand
-                new InstantCommand(() -> claw.makeMotorSpin(-0.07)),
-                new InstantCommand(() -> elevator.setPosition(Constants.ElevatorConstants.pos[RobotState.l4.ordinal()])),
-                new WaitUntilCommand(()-> elevator.getEncoder() > 1.5),
-                new InstantCommand(() -> armPivot.setPosition(-1.95751953125, false))
-            )
-        );
+        // driverController.y().onTrue(
+        //     new SequentialCommandGroup(
+        //         new InstantCommand(() -> elevator.setPosition(Constants.ElevatorConstants.pos[RobotState.coralIntake.ordinal()])),
+        //         new InstantCommand(() -> claw.makeMotorSpin(-0.4)),
+        //         new WaitCommand(1), // TODO: make WaitUntilCommand
+        //         new InstantCommand(() -> claw.makeMotorSpin(-0.07)),
+        //         new InstantCommand(() -> elevator.setPosition(Constants.ElevatorConstants.pos[RobotState.l4.ordinal()])),
+        //         new WaitUntilCommand(()-> elevator.getEncoder() > 1.5),
+        //         new InstantCommand(() -> armPivot.setPosition(-1.95751953125, false))
+        //     )
+        // );
 
         //driverController.povDown().whileTrue(new ClawOuttake(this,claw));
 
@@ -243,6 +243,35 @@ public class RobotContainer {
                 new WaitUntilCommand(()-> elevator.getEncoder() > 1.5),
                 new InstantCommand(() -> armPivot.setPosition(-1.95751953125, false))   
             )
+        );
+
+        NamedCommands.registerCommand("ArmDown",
+            new SequentialCommandGroup(
+                new InstantCommand(() -> claw.setBrakeMode(false)),
+                new InstantCommand(() -> armPivot.setPosition(-0.98, true)),
+                new WaitCommand(1),
+                new InstantCommand(() -> claw.setBrakeMode(true))
+            )
+        );
+
+        NamedCommands.registerCommand("Home",
+          new SequentialCommandGroup(
+                // reset all to home position
+                new InstantCommand(() -> elevator.setPosition(1.5)),
+                new WaitCommand(1),
+                //new WaitUntilCommand(()-> elevator.getEncoder() > 1.4 && elevator.getEncoder() < 1.6),
+                new InstantCommand(() -> armPivot.setPosition(Constants.ArmPivotConstants.pos[RobotState.start.ordinal()], false)),
+             //  new InstantCommand(() -> armPivot.setPosition(0.4, false)),
+                new WaitCommand(1),
+                new InstantCommand(() -> elevator.setPosition(0.8))
+            )
+        );
+
+        NamedCommands.registerCommand("Align 10 Left",
+            new Align(this, Constants.AlignPositions.tag10L, 0.02)
+        );
+        NamedCommands.registerCommand("Align 10 Right",
+            new Align(this, Constants.AlignPositions.tag10R, 0.02)
         );
     }
 

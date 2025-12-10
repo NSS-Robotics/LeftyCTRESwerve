@@ -137,7 +137,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
                         var alliance = DriverStation.getAlliance();
                         if (alliance.isPresent()) {
-                            return alliance.get() == DriverStation.Alliance.Red & !DriverStation.isTeleop();
+                            return alliance.get() == DriverStation.Alliance.Blue;
                         }
                         return false;
                 },

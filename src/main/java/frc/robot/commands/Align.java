@@ -33,18 +33,6 @@ public class Align extends Command {
 
     @Override
     public void initialize() {
-
-        Pose2d fieldTarget = new Pose2d(
-            // APRIL TAG 8
-            // 13.88,
-            // 5.211,
-            // Rotation2d.fromDegrees(65)
-            // APRIL TAG 10
-            11.220275005276687,
-            3.8989204767003915,
-            Rotation2d.fromDegrees(180)
-        );
-
         currentPos = swerve.getPoseMeters();
         // This is for when the limelight does NOT update the swerve odometry
         // targetPos = new Pose2d(

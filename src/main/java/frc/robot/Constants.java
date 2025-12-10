@@ -195,7 +195,8 @@ public class Constants {
 
     public static class AlignPositions {
         public static final Pose2d tag10L = new Pose2d(
-            11.833539369392948,
+            // 11.833539369392948,
+            11.65,
             4.226266826312283,
             Rotation2d.fromDegrees(180)
         );

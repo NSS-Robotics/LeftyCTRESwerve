@@ -158,7 +158,7 @@ public class Constants {
         public static final double upKP = 8.88268699;
         public static final double upKI = 0;
         public static final double upKD = 0.18;
-        public static final double downKP = 4.2;
+        public static final double downKP = 4.3;
         public static final double downKI = 0;
         public static final double downKD = 0.1;
         public static final double scoreKP = 16.5;
@@ -169,7 +169,8 @@ public class Constants {
 
         public static final double pos[] = {
             // ARM PIVOT
-            0.336181640625, // start
+            // 0.3567181640625, // start
+            0.35,
             0, // coralIntake
             -1.38427734375, // l4
             -1.9296875, // l3
@@ -196,12 +197,14 @@ public class Constants {
     public static class AlignPositions {
         public static final Pose2d tag10L = new Pose2d(
             // 11.833539369392948,
-            11.65,
+            // 11.65,
+            11.74,
             4.226266826312283,
             Rotation2d.fromDegrees(180)
         );
         public static final Pose2d tag10R = new Pose2d(
-            11.833549038543892,
+            //11.833549038543892,
+            11.74,
             3.8080742362798617,
             Rotation2d.fromDegrees(180)
             // Rotation2d.fromDegrees(3.8264360210099335)

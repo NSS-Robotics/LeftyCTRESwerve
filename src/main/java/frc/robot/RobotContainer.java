@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
@@ -235,6 +236,7 @@ public class RobotContainer {
     private void addCommandsToPathplanner() {
         NamedCommands.registerCommand("shotgun", 
             new SequentialCommandGroup(
+                new InstantCommand(() -> armPivot.setPosition((Constants.ArmPivotConstants.pos[RobotState.start.ordinal()]), true)),
                 new InstantCommand(() -> elevator.setPosition(Constants.ElevatorConstants.pos[RobotState.coralIntake.ordinal()])),
                 new InstantCommand(() -> claw.makeMotorSpin(-0.4)),
                 new WaitCommand(1), // TODO: make WaitUntilCommand
@@ -254,6 +256,22 @@ public class RobotContainer {
             )
         );
 
+        NamedCommands.registerCommand("IntakeStop",
+            new InstantCommand(() -> {
+                intakePivot.setPosition(Constants.IntakeConstants.upPosition);
+                indexer.stopIndexer();
+                intake.stopIntake();   
+            })
+        );
+
+        NamedCommands.registerCommand("IntakeStart", 
+            new InstantCommand(() -> {
+                intakePivot.setPosition(Constants.IntakeConstants.intakeStartPos);
+                intake.setIntake(Constants.IntakeConstants.velocity, false);
+                indexer.setIndexer(Constants.IndexerConstants.velocity);            
+            })
+        );
+
         NamedCommands.registerCommand("Home",
           new SequentialCommandGroup(
                 // reset all to home position
@@ -266,6 +284,7 @@ public class RobotContainer {
                 new InstantCommand(() -> elevator.setPosition(0.8))
             )
         );
+
 
         NamedCommands.registerCommand("Align 10 Left",
             new Align(this, Constants.AlignPositions.tag10L, 0.02)

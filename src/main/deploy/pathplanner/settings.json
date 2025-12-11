@@ -7,10 +7,11 @@
     "B LS Lollipop 2L4+2L2",
     "B RS 4P L4",
     "B RS Lollipop 2L4+2L2\r",
-    "R RS Lollipop 2L4+2L2",
+    "test",
     "R LS 4P L4",
     "R LS Lollipop 2L4+2L2",
-    "R RS 4P L4"
+    "R RS 4P L4",
+    "R RS Lollipop 2L4+2L2"
   ],
   "autoFolders": [
     "4P L4",

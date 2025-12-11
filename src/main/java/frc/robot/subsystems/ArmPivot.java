@@ -187,7 +187,7 @@ public class ArmPivot extends SubsystemBase {
     }
 
     if(isChangedDown){
-      motor.getConfigurator().apply(downPIDConfigs);
+      // motor.getConfigurator().apply(downPIDConfigs);
     }
 
 

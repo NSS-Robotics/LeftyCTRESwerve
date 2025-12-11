@@ -155,7 +155,7 @@ public class Constants {
         public static final int motorID = 32;
         public static final int encoderID = 34;
         // PID and feedforward
-        public static final double upKP = 8.88268699;
+        public static final double upKP = 4;//8.88268699;
         public static final double upKI = 0;
         public static final double upKD = 0.18;
         public static final double downKP = 4.2;

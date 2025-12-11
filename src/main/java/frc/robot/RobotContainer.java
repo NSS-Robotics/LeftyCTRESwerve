@@ -49,6 +49,7 @@ public class RobotContainer {
     public final Claw claw = new Claw(this);
     public final ArmPivot armPivot = new ArmPivot(this);
     public final Elevator elevator = new Elevator(this);
+    public final MotionMagicElevator mmelevator = new MotionMagicElevator(this);
 
     // Variables
     public boolean isCoral = true;
@@ -86,18 +87,33 @@ public class RobotContainer {
         // zero gyro
        // driverController.y().onTrue(new InstantCommand(() -> drivetrain.seedFieldCentric()));
 
+        // driverController
+        //     .b()
+        //     .onTrue(
+        //         new SequentialCommandGroup(
+        //             // reset all to home position
+        //             new InstantCommand(() -> elevator.setPosition(1.5)),
+        //             new WaitCommand(1),
+        //             //new WaitUntilCommand(()-> elevator.getEncoder() > 1.4 && elevator.getEncoder() < 1.6),
+        //             new InstantCommand(() -> armPivot.setPosition(Constants.ArmPivotConstants.pos[RobotState.start.ordinal()], false)),
+        //          //  new InstantCommand(() -> armPivot.setPosition(0.4, false)),
+        //             new WaitCommand(1),
+        //             new InstantCommand(() -> elevator.setPosition(0.8))
+        //         )
+        //     );
+
         driverController
             .b()
             .onTrue(
                 new SequentialCommandGroup(
                     // reset all to home position
-                    new InstantCommand(() -> elevator.setPosition(1.5)),
+                    new InstantCommand(() -> mmelevator.setPosition(3)),
                     new WaitCommand(1),
                     //new WaitUntilCommand(()-> elevator.getEncoder() > 1.4 && elevator.getEncoder() < 1.6),
-                    new InstantCommand(() -> armPivot.setPosition(Constants.ArmPivotConstants.pos[RobotState.start.ordinal()], false)),
+                    // new InstantCommand(() -> armPivot.setPosition(Constants.ArmPivotConstants.pos[RobotState.start.ordinal()], false)),
                  //  new InstantCommand(() -> armPivot.setPosition(0.4, false)),
                     new WaitCommand(1),
-                    new InstantCommand(() -> elevator.setPosition(0.8))
+                    new InstantCommand(() -> mmelevator.setPosition(0.8))
                 )
             );
 
@@ -119,10 +135,10 @@ public class RobotContainer {
             .onTrue(
                 new SequentialCommandGroup(
                     // descore algae from reef
-                    new InstantCommand(() -> elevator.setPosition(Constants.ElevatorConstants.pos[RobotState.algaeReefLow.ordinal()])),
+                    new InstantCommand(() -> mmelevator.setPosition(Constants.ElevatorConstants.pos[RobotState.algaeReefLow.ordinal()])),
                     new WaitCommand(0.2),
-                    new InstantCommand(() -> armPivot.setPosition(Constants.ArmPivotConstants.pos[RobotState.algaeReefLow.ordinal()], false)),
-                    new InstantCommand(() -> claw.makeMotorSpin(-0.4))
+                    new InstantCommand(() -> armPivot.setPosition(Constants.ArmPivotConstants.pos[RobotState.algaeReefLow.ordinal()], false))
+                    // new InstantCommand(() -> claw.makeMotorSpin(-0.4))
                 )
             );
             // testing pid values elevator goes up and down
@@ -162,36 +178,45 @@ public class RobotContainer {
         );
         driverController.y().onTrue(
             new SequentialCommandGroup(
-                new InstantCommand(() -> elevator.setPosition(Constants.ElevatorConstants.pos[RobotState.coralIntake.ordinal()])),
-                new InstantCommand(() -> claw.makeMotorSpin(-0.4)),
+                // new InstantCommand(() -> mmelevator.setPosition(Constants.ElevatorConstants.pos[RobotState.coralIntake.ordinal()])),
+                // new InstantCommand(() -> claw.makeMotorSpin(-0.4)),
                 new WaitCommand(1), // TODO: make WaitUntilCommand
-                new InstantCommand(() -> claw.makeMotorSpin(-0.07)),
-                new InstantCommand(() -> elevator.setPosition(Constants.ElevatorConstants.pos[RobotState.l4.ordinal()])),
-                new WaitUntilCommand(()-> elevator.getEncoder() > 1.5),
-                new InstantCommand(() -> armPivot.setPosition(-1.95751953125, false))
+                // new InstantCommand(() -> claw.makeMotorSpin(-0.07)),
+                new InstantCommand(() -> mmelevator.setPosition(Constants.ElevatorConstants.pos[RobotState.l4.ordinal()])),
+                new WaitUntilCommand(()-> mmelevator.getEncoder() > 1.5),
+                // new InstantCommand(() -> armPivot.setPosition(-1.95751953125, false))
+                new InstantCommand(() -> armPivot.setPosition(Constants.ArmPivotConstants.pos[RobotState.l2.ordinal()], false))
+            )
+        );
+
+        driverController.x().onTrue( 
+            new SequentialCommandGroup(
+                new InstantCommand(() -> armPivot.setPosition(0, false)),
+                new WaitCommand(0.5),
+                new InstantCommand(() -> mmelevator.setPosition(Constants.ElevatorConstants.pos[RobotState.start.ordinal()]))
             )
         );
 
         //driverController.povDown().whileTrue(new ClawOuttake(this,claw));
 
-        driverController.x().onTrue(
-            new SequentialCommandGroup(
-                // score l3
-                new InstantCommand(() -> elevator.setPosition(Constants.ElevatorConstants.pos[RobotState.coralIntake.ordinal()])),
-                new InstantCommand(() -> claw.makeMotorSpin(-0.4)),
-                new WaitCommand(1), // TODO: make WaitUntilCommand
-                new InstantCommand(() -> claw.makeMotorSpin(-0.07)),
-                new InstantCommand(() -> elevator.setPosition(1.3)),
-                new WaitCommand(0.5), // BAD
-                new InstantCommand(() -> armPivot.setPosition(
-                    Constants.ArmPivotConstants.pos[RobotState.l3.ordinal()], false
-                )),
-                new WaitCommand(0.5), // BAD
-                new InstantCommand(() -> elevator.setPosition(
-                    Constants.ElevatorConstants.pos[RobotState.l3.ordinal()]
-                ))
-            )
-        );
+        // driverController.x().onTrue(
+        //     new SequentialCommandGroup(
+        //         // score l3
+        //         new InstantCommand(() -> elevator.setPosition(Constants.ElevatorConstants.pos[RobotState.coralIntake.ordinal()])),
+        //         new InstantCommand(() -> claw.makeMotorSpin(-0.4)),
+        //         new WaitCommand(1), // TODO: make WaitUntilCommand
+        //         new InstantCommand(() -> claw.makeMotorSpin(-0.07)),
+        //         new InstantCommand(() -> elevator.setPosition(1.3)),
+        //         new WaitCommand(0.5), // BAD
+        //         new InstantCommand(() -> armPivot.setPosition(
+        //             Constants.ArmPivotConstants.pos[RobotState.l3.ordinal()], false
+        //         )),
+        //         new WaitCommand(0.5), // BAD
+        //         new InstantCommand(() -> elevator.setPosition(
+        //             Constants.ElevatorConstants.pos[RobotState.l3.ordinal()]
+        //         ))
+        //     )
+        // );
 
         // driverController
         // .povLeft()
@@ -223,6 +248,9 @@ public class RobotContainer {
         //driverController.leftBumper          Left Align 
 
         driverController.a().whileTrue(new Align(this, new Pose2d(11.4, 4.1, Rotation2d.fromDegrees(180)), 0.1));
+
+        // driverController.a().whileTrue( new InstantCommand(() -> intake.setIntake(Constants.IntakeConstants.algaePosition, false)));
+        // driverController.rightTrigger().onTrue(new InstantCommand(() -> elevator.setPosition(Constants.ElevatorConstants.pos[RobotState.barge.ordinal()])));
     }
 
     public Command getAutonomousCommand() {

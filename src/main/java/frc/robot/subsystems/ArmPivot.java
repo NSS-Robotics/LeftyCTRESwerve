@@ -10,6 +10,8 @@ import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.Slot1Configs;
 import com.ctre.phoenix6.configs.Slot2Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.MotionMagicExpoVoltage;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
@@ -18,6 +20,7 @@ import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
+import com.ctre.phoenix6.configs.MotionMagicConfigs;
 
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
@@ -38,6 +41,7 @@ public class ArmPivot extends SubsystemBase {
   private Slot2Configs scorePIDConfigs;
   private CANcoderConfiguration canCoderConfig;
   private CurrentLimitsConfigs currentLimitsConfigs;
+  private MotionMagicConfigs motionMagicConfig;
   private double slot0TuneP = 0;
   private double slot0TuneI = 0;
   private double slot0TuneD = 0;
@@ -86,11 +90,20 @@ public class ArmPivot extends SubsystemBase {
     currentLimitsConfigs.StatorCurrentLimit = 50;
     currentLimitsConfigs.StatorCurrentLimitEnable = true;
 
+    //arbitrary test values
+    motionMagicConfig = motorConfig.MotionMagic;
+    motionMagicConfig.MotionMagicCruiseVelocity = 50;
+    motionMagicConfig.MotionMagicAcceleration = 70;
+    motionMagicConfig.MotionMagicJerk = 0; //infinite
+    // motionMagicConfig.MotionMagicExpo_kA = 0.01; // num volts for 1 unit of accel r/s^2
+    // motionMagicConfig.MotionMagicExpo_kV = 0.12; // same for voltage r/s
+
     motor.getConfigurator().apply(motorConfig);
     motor.getConfigurator().apply(upPIDConfigs);
     motor.getConfigurator().apply(downPIDConfigs);
     motor.getConfigurator().apply(scorePIDConfigs);
     motor.getConfigurator().apply(currentLimitsConfigs);
+    motor.getConfigurator().apply(motionMagicConfig);
     motor.setNeutralMode(NeutralModeValue.Brake);
   }
 
@@ -106,8 +119,10 @@ public class ArmPivot extends SubsystemBase {
       slot = 2;
     }
 
-    pv = new PositionVoltage(targetPos).withSlot(slot);
-    motor.setControl(pv);
+    // MotionMagicExpoVoltage mm_Request = new MotionMagicExpoVoltage(targetPos).withSlot(slot);
+    MotionMagicVoltage mm_Request = new MotionMagicVoltage(targetPos).withSlot(slot);
+
+    motor.setControl(mm_Request);
   }
 
   public double getEncoder() {
@@ -187,7 +202,7 @@ public class ArmPivot extends SubsystemBase {
     }
 
     if(isChangedDown){
-      motor.getConfigurator().apply(downPIDConfigs);
+      // motor.getConfigurator().apply(downPIDConfigs);
     }
 
 

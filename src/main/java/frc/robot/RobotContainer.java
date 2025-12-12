@@ -33,6 +33,7 @@ import frc.robot.subsystems.*;
 
 public class RobotContainer {
     private final CommandXboxController driverController = new CommandXboxController(0);
+    private final CommandXboxController operatorController = new CommandXboxController(1);
 
     private final SendableChooser<Command> autoChooser;
 
@@ -93,13 +94,13 @@ public class RobotContainer {
         // driverController.start().and(driverController.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
         // zero gyro
-        driverController.y().onTrue(new InstantCommand(() -> drivetrain.seedFieldCentric())); // CHANGE button so l4 and zero gyro arent the same thing
+        driverController.y().onTrue(new InstantCommand(() -> drivetrain.seedFieldCentric())); // TODO: button so l4 and zero gyro arent the same thing
 
         //align 
         driverController.a().whileTrue(new Align(this, new Pose2d(11.4, 4.1, Rotation2d.fromDegrees(180)), 0.1));
 
         // move up to l4/l3
-        driverController.y().onTrue(
+        operatorController.y().onTrue(
             new SequentialCommandGroup(
                 //l4
                 new InstantCommand(() -> elevator.setPosition(Constants.ElevatorConstants.pos[RobotState.l4.ordinal()])),
@@ -108,7 +109,7 @@ public class RobotContainer {
             )
         );
 
-        driverController.x().onTrue(
+        operatorController.x().onTrue(
             new SequentialCommandGroup(
                 // score l3
                 new InstantCommand(() -> elevator.setPosition(1.3)),
@@ -124,7 +125,7 @@ public class RobotContainer {
         );
 
         // align to scoring postition (left and right)
-        driverController.rightBumper().whileTrue(
+        operatorController.rightBumper().whileTrue(
             new Align(
                     this,
                     new Pose2d(
@@ -136,7 +137,7 @@ public class RobotContainer {
                 )
         );
 
-        driverController.leftBumper().whileTrue(
+        operatorController.leftBumper().whileTrue(
             new Align(
                     this,
                     new Pose2d(
@@ -150,7 +151,8 @@ public class RobotContainer {
 
         driverController.leftTrigger().onTrue(
             new SequentialCommandGroup(
-                // intake and shotgun 
+                // intake and shotgun
+                new InstantCommand(() -> elevator.setPosition(1.5)),
                 new IntakeGround(this), // CHANGE - to detect the coral?? 
                 new InstantCommand(() -> armPivot.setPosition((Constants.ArmPivotConstants.pos[RobotState.start.ordinal()]), true)),
                 new InstantCommand(() -> elevator.setPosition(Constants.ElevatorConstants.pos[RobotState.coralIntake.ordinal()])),
@@ -169,19 +171,16 @@ public class RobotContainer {
                 new InstantCommand(() -> claw.setBrakeMode(true)),
                
                 // reset all to home position
-                new InstantCommand(() -> elevator.setPosition(1.5)),
-                new WaitCommand(1),
-                //new WaitUntilCommand(()-> elevator.getEncoder() > 1.4 && elevator.getEncoder() < 1.6),
                 new InstantCommand(() -> armPivot.setPosition(Constants.ArmPivotConstants.pos[RobotState.start.ordinal()], false)),
+                new InstantCommand(() -> elevator.setPosition(1.5)),
+                //new WaitUntilCommand(()-> elevator.getEncoder() > 1.4 && elevator.getEncoder() < 1.6),
                 //new InstantCommand(() -> armPivot.setPosition(0.4, false)),
                 new WaitCommand(1),
                 new InstantCommand(() -> elevator.setPosition(0.8))
             )
         );
         
-        driverController
-        .b()
-        .onTrue(
+        driverController.b().onTrue(
             new SequentialCommandGroup(
                 // reset all to home position
                 new InstantCommand(() -> elevator.setPosition(1.5)),
@@ -206,6 +205,10 @@ public class RobotContainer {
                     new InstantCommand(() -> claw.makeMotorSpin(-0.4))
                 )
             );
+        
+        driverController
+            .leftBumper()
+            .onTrue(new InstantCommand(() -> new IntakeGround(this).end(false)));
         
         // emotional support comments
         

@@ -2,6 +2,8 @@ package frc.robot.subsystems;
 
 import au.grapplerobotics.ConfigurationFailedException;
 import au.grapplerobotics.LaserCan;
+import au.grapplerobotics.interfaces.LaserCanInterface;
+
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
@@ -20,10 +22,12 @@ public class Indexer extends SubsystemBase {
     );
     private final SparkMaxConfig motorConfig;
     private final LaserCan lasercan;
+    private final LaserCan troughLaserCan;
 
     public Indexer() {
         motorConfig = new SparkMaxConfig();
         lasercan = new LaserCan(Constants.IndexerConstants.laserCANID);
+        troughLaserCan = new LaserCan(Constants.IndexerConstants.coralHolderLaserCANID);
 
         // motorConfig.closedLoop
         // .p(Constants.IndexerConstants.kP)
@@ -63,13 +67,23 @@ public class Indexer extends SubsystemBase {
     }
 
     public boolean gamepieceDetected() {
-        if (lasercan.getMeasurement() == null) {
+        if (lasercan.getMeasurement() == null || lasercan.getMeasurement().status != LaserCanInterface.LASERCAN_STATUS_VALID_MEASUREMENT) {
             return false;
         }
         double measurement = lasercan.getMeasurement().distance_mm;
         return measurement < 20;
         // return 4 < 20;
     }
+
+    public boolean troughGamepieceDetected() {
+        if (troughLaserCan.getMeasurement() == null || troughLaserCan.getMeasurement().status != LaserCanInterface.LASERCAN_STATUS_VALID_MEASUREMENT) {
+            return false;
+        }
+        double measurement = troughLaserCan.getMeasurement().distance_mm;
+        return measurement < 20;
+        // return 4 < 20;
+    }
+
 
     public void stopIndexer() {
         motor.stopMotor();
@@ -89,6 +103,10 @@ public class Indexer extends SubsystemBase {
             "LaserCAN dist Indexer",
             // lasercan.getMeasurement().distance_mm
             0
+        );
+        SmartDashboard.putBoolean(
+            "Trough Game Piece Detected",
+            troughGamepieceDetected()
         );
         SmartDashboard.putNumber("Indexer Current", motor.getOutputCurrent());
     }

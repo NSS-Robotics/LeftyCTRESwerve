@@ -33,4 +33,9 @@ public class IntakeGround extends Command {
         m_indexer.stopIndexer();
         m_intake.stopIntake();
     }
+
+    @Override
+    public boolean isFinished() {
+        return m_indexer.troughGamepieceDetected();
+    }
 }

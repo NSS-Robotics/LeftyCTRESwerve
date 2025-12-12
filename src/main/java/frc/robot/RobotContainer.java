@@ -1,3 +1,4 @@
+
 // Copyright (c) FIRST and other WPILib contributors.
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
@@ -92,59 +93,37 @@ public class RobotContainer {
         // driverController.start().and(driverController.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
         // zero gyro
-        driverController.y().onTrue(new InstantCommand(() -> drivetrain.seedFieldCentric()));
+        driverController.y().onTrue(new InstantCommand(() -> drivetrain.seedFieldCentric())); // CHANGE button so l4 and zero gyro arent the same thing
 
-        driverController
-            .b()
-            .onTrue(
-                new SequentialCommandGroup(
-                    // reset all to home position
-                    new InstantCommand(() -> elevator.setPosition(1.5)),
-                    new WaitCommand(1),
-                    //new WaitUntilCommand(()-> elevator.getEncoder() > 1.4 && elevator.getEncoder() < 1.6),
-                    new InstantCommand(() -> armPivot.setPosition(Constants.ArmPivotConstants.pos[RobotState.start.ordinal()], false)),
-                 //  new InstantCommand(() -> armPivot.setPosition(0.4, false)),
-                    new WaitCommand(1),
-                    new InstantCommand(() -> elevator.setPosition(0.8))
-                )
-            );
+        //align 
+        driverController.a().whileTrue(new Align(this, new Pose2d(11.4, 4.1, Rotation2d.fromDegrees(180)), 0.1));
 
-        // driverController
-        //     .povLeft()
-        //     .onTrue(
-        //         new SequentialCommandGroup(
-        //             // score algae in barge
-        //             new InstantCommand(() -> elevator.setPosition(Constants.ElevatorConstants.pos[RobotState.barge.ordinal()])),
-        //             new WaitCommand(0.2),
-        //             new InstantCommand(() -> armPivot.setPosition(Constants.ArmPivotConstants.pos[RobotState.barge.ordinal()], false)),
-        //             new WaitCommand(0.5),
-        //             new InstantCommand(() -> claw.makeMotorSpin(1))
-        //         )
-        //     );
-
-        driverController
-            .povDown()
-            .onTrue(
-                new SequentialCommandGroup(
-                    // descore algae from reef
-                    new InstantCommand(() -> elevator.setPosition(Constants.ElevatorConstants.pos[RobotState.algaeReefLow.ordinal()])),
-                    new WaitCommand(0.2),
-                    new InstantCommand(() -> armPivot.setPosition(Constants.ArmPivotConstants.pos[RobotState.algaeReefLow.ordinal()], false)),
-                    new InstantCommand(() -> claw.makeMotorSpin(-0.4))
-                )
-            );
-            // testing pid values elevator goes up and down
-        driverController
-            .povRight()
-            .onTrue(
-                new InstantCommand(() -> elevator.setPosition(3.7))
-        );    
-        driverController
-            .povLeft()
-            .onTrue(
-                new InstantCommand(() -> elevator.setPosition(1))
+        // move up to l4/l3
+        driverController.y().onTrue(
+            new SequentialCommandGroup(
+                //l4
+                new InstantCommand(() -> elevator.setPosition(Constants.ElevatorConstants.pos[RobotState.l4.ordinal()])),
+                new WaitUntilCommand(()-> elevator.getEncoder() > 1.5),
+                new InstantCommand(() -> armPivot.setPosition(-1.95751953125, false))
+            )
         );
 
+        driverController.x().onTrue(
+            new SequentialCommandGroup(
+                // score l3
+                new InstantCommand(() -> elevator.setPosition(1.3)),
+                new WaitCommand(0.5), // BAD
+                new InstantCommand(() -> armPivot.setPosition(
+                    Constants.ArmPivotConstants.pos[RobotState.l3.ordinal()], false
+                )),
+                new WaitCommand(0.5), // BAD
+                new InstantCommand(() -> elevator.setPosition(
+                    Constants.ElevatorConstants.pos[RobotState.l3.ordinal()]
+                ))
+            )
+        );
+
+        // align to scoring postition (left and right)
         driverController.rightBumper().whileTrue(
             new Align(
                     this,
@@ -168,71 +147,86 @@ public class RobotContainer {
                     0.02
                 )
         );
-        // driverController.y().onTrue(
-        //     new SequentialCommandGroup(
-        //         new InstantCommand(() -> elevator.setPosition(Constants.ElevatorConstants.pos[RobotState.coralIntake.ordinal()])),
-        //         new InstantCommand(() -> claw.makeMotorSpin(-0.4)),
-        //         new WaitCommand(1), // TODO: make WaitUntilCommand
-        //         new InstantCommand(() -> claw.makeMotorSpin(-0.07)),
-        //         new InstantCommand(() -> elevator.setPosition(Constants.ElevatorConstants.pos[RobotState.l4.ordinal()])),
-        //         new WaitUntilCommand(()-> elevator.getEncoder() > 1.5),
-        //         new InstantCommand(() -> armPivot.setPosition(-1.95751953125, false))
-        //     )
-        // );
 
-        //driverController.povDown().whileTrue(new ClawOuttake(this,claw));
-
-        driverController.x().onTrue(
+        driverController.leftTrigger().onTrue(
             new SequentialCommandGroup(
-                // score l3
+                // intake and shotgun 
+                new IntakeGround(this), // CHANGE - to detect the coral?? 
+                new InstantCommand(() -> armPivot.setPosition((Constants.ArmPivotConstants.pos[RobotState.start.ordinal()]), true)),
                 new InstantCommand(() -> elevator.setPosition(Constants.ElevatorConstants.pos[RobotState.coralIntake.ordinal()])),
                 new InstantCommand(() -> claw.makeMotorSpin(-0.4)),
                 new WaitCommand(1), // TODO: make WaitUntilCommand
-                new InstantCommand(() -> claw.makeMotorSpin(-0.07)),
-                new InstantCommand(() -> elevator.setPosition(1.3)),
-                new WaitCommand(0.5), // BAD
-                new InstantCommand(() -> armPivot.setPosition(
-                    Constants.ArmPivotConstants.pos[RobotState.l3.ordinal()], false
-                )),
-                new WaitCommand(0.5), // BAD
-                new InstantCommand(() -> elevator.setPosition(
-                    Constants.ElevatorConstants.pos[RobotState.l3.ordinal()]
-                ))
+                new InstantCommand(() -> claw.makeMotorSpin(-0.07))
             )
         );
-
-        // driverController
-        // .povLeft()
-        // .whileTrue(
-        //     new SequentialCommandGroup(
-        //         new InstantCommand(() -> elevator.setPosition(1.3)),
-        //         new WaitCommand(0.5), // BAD
-        //         new InstantCommand(() -> armPivot.setPosition(
-        //             Constants.ArmPivotConstants.pos[RobotState.l3.ordinal()], false
-        //         )),
-        //         new WaitCommand(0.5), // BAD
-        //         new InstantCommand(() -> elevator.setPosition(
-        //             Constants.ElevatorConstants.pos[RobotState.l3.ordinal()]
-        //         ))
-        //     )
-        // );
-
-        driverController.leftTrigger().whileTrue(new IntakeGround(this));
 
         driverController.rightTrigger().onTrue(
             new SequentialCommandGroup(
+                // score
                 new InstantCommand(() -> claw.setBrakeMode(false)),
                 new InstantCommand(() -> armPivot.setPosition(-0.98, true)),
                 new WaitCommand(1),
-                new InstantCommand(() -> claw.setBrakeMode(true))
+                new InstantCommand(() -> claw.setBrakeMode(true)),
+               
+                // reset all to home position
+                new InstantCommand(() -> elevator.setPosition(1.5)),
+                new WaitCommand(1),
+                //new WaitUntilCommand(()-> elevator.getEncoder() > 1.4 && elevator.getEncoder() < 1.6),
+                new InstantCommand(() -> armPivot.setPosition(Constants.ArmPivotConstants.pos[RobotState.start.ordinal()], false)),
+                //new InstantCommand(() -> armPivot.setPosition(0.4, false)),
+                new WaitCommand(1),
+                new InstantCommand(() -> elevator.setPosition(0.8))
+            )
+        );
+        
+        driverController
+        .b()
+        .onTrue(
+            new SequentialCommandGroup(
+                // reset all to home position
+                new InstantCommand(() -> elevator.setPosition(1.5)),
+                new WaitCommand(1),
+                //new WaitUntilCommand(()-> elevator.getEncoder() > 1.4 && elevator.getEncoder() < 1.6),
+                new InstantCommand(() -> armPivot.setPosition(Constants.ArmPivotConstants.pos[RobotState.start.ordinal()], false)),
+             //  new InstantCommand(() -> armPivot.setPosition(0.4, false)),
+                new WaitCommand(1),
+                new InstantCommand(() -> elevator.setPosition(0.8))
             )
         );
 
-        //driverController.leftBumper          Left Align 
+        //algae 
+        driverController
+            .povDown()
+            .onTrue(
+                new SequentialCommandGroup(
+                    // descore algae from reef
+                    new InstantCommand(() -> elevator.setPosition(Constants.ElevatorConstants.pos[RobotState.algaeReefLow.ordinal()])),
+                    new WaitCommand(0.2),
+                    new InstantCommand(() -> armPivot.setPosition(Constants.ArmPivotConstants.pos[RobotState.algaeReefLow.ordinal()], false)),
+                    new InstantCommand(() -> claw.makeMotorSpin(-0.4))
+                )
+            );
+        
+        // emotional support comments
+        
+        // testing pid values elevator goes up and down
+        // driverController
+        //     .povRight()
+        //     .onTrue(
+        //         new InstantCommand(() -> elevator.setPosition(3.7))
+        // );    
+        // driverController
+        //     .povLeft()
+        //     .onTrue(
+        //         new InstantCommand(() -> elevator.setPosition(1))
+        // );
 
-        driverController.a().whileTrue(new Align(this, new Pose2d(11.4, 4.1, Rotation2d.fromDegrees(180)), 0.1));
+        //driverController.povDown().whileTrue(new ClawOuttake(this,claw));
+        //driverController.leftBumper          Left Align
     }
 
+
+    //pathplanner commands
     private void addCommandsToPathplanner() {
         NamedCommands.registerCommand("shotgun", 
             new SequentialCommandGroup(

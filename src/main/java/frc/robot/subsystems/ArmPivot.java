@@ -92,11 +92,11 @@ public class ArmPivot extends SubsystemBase {
 
     //arbitrary test values
     motionMagicConfig = motorConfig.MotionMagic;
-    motionMagicConfig.MotionMagicCruiseVelocity = 50;
-    motionMagicConfig.MotionMagicAcceleration = 70;
-    motionMagicConfig.MotionMagicJerk = 0; //infinite
-    // motionMagicConfig.MotionMagicExpo_kA = 0.01; // num volts for 1 unit of accel r/s^2
-    // motionMagicConfig.MotionMagicExpo_kV = 0.12; // same for voltage r/s
+    motionMagicConfig.MotionMagicCruiseVelocity = 0; // infinite –– may be dangerous for the robot
+    motionMagicConfig.MotionMagicAcceleration = 0; // same here
+    motionMagicConfig.MotionMagicJerk = 0; // infinite but probably fine
+    motionMagicConfig.MotionMagicExpo_kA = 0.01; // num volts for 1 unit of accel r/s^2
+    motionMagicConfig.MotionMagicExpo_kV = 0.12; // same for voltage r/s
 
     motor.getConfigurator().apply(motorConfig);
     motor.getConfigurator().apply(upPIDConfigs);
@@ -110,9 +110,8 @@ public class ArmPivot extends SubsystemBase {
   public void setPosition(double targetPos, boolean isScoring) {
     int slot = 1; // Default to assuming arm is going down.
 
-    if (getEncoder() > targetPos) {
-      // If arm is going up, use up PID.
-      slot = 0;
+    if (getEncoder() > targetPos) { // negative values are up
+      slot = 0; // If arm is going up, use up PID.
     }
 
     if (isScoring) {
@@ -121,7 +120,6 @@ public class ArmPivot extends SubsystemBase {
 
     // MotionMagicExpoVoltage mm_Request = new MotionMagicExpoVoltage(targetPos).withSlot(slot);
     MotionMagicVoltage mm_Request = new MotionMagicVoltage(targetPos).withSlot(slot);
-
     motor.setControl(mm_Request);
   }
 
@@ -173,7 +171,7 @@ public class ArmPivot extends SubsystemBase {
     }
 
     if(isChanged){
-      motor.getConfigurator().apply(upPIDConfigs);
+      // motor.getConfigurator().apply(upPIDConfigs);
     }
 
     

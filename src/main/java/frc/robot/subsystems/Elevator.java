@@ -9,7 +9,6 @@ import com.ctre.phoenix6.configs.Slot1Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.PositionVoltage;
-import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -28,9 +27,9 @@ public class Elevator extends SubsystemBase {
   private final CANcoder encoder = new CANcoder(Constants.ElevatorConstants.encoder);
  
   private PositionVoltage pv = new PositionVoltage(0).withSlot(0);
-  private double slot0TuneP =0;
-  private double slot0TuneI =0;
-  private double slot0TuneD =0;
+  private double slot0TuneP = 0;
+  private double slot0TuneI = 0;
+  private double slot0TuneD = 0;
   // Motor configuration
   private TalonFXConfiguration motorConfig;
   private Slot0Configs slot0Configs;

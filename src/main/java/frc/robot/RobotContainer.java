@@ -97,15 +97,17 @@ public class RobotContainer {
         driverController.y().onTrue(new InstantCommand(() -> drivetrain.seedFieldCentric())); // TODO: button so l4 and zero gyro arent the same thing
 
         //align 
-        driverController.a().whileTrue(new Align(this, new Pose2d(11.4, 4.1, Rotation2d.fromDegrees(180)), 0.1));
+        driverController.a().whileTrue(
+            new Align(this, new Pose2d(11, 4.1, Rotation2d.fromDegrees(180)), 0.025)
+        );
 
-        // move up to l4/l3
+        // move up to l4
         operatorController.y().onTrue(
             new SequentialCommandGroup(
                 //l4
                 new InstantCommand(() -> elevator.setPosition(Constants.ElevatorConstants.pos[RobotState.l4.ordinal()])),
                 new WaitUntilCommand(()-> elevator.getEncoder() > 1.5),
-                new InstantCommand(() -> armPivot.setPosition(-1.95751953125, false))
+                new InstantCommand(() -> armPivot.setPosition(Constants.ArmPivotConstants.pos[RobotState.l4.ordinal()], false))
             )
         );
 
@@ -149,24 +151,28 @@ public class RobotContainer {
                 )
         );
 
-        driverController.leftTrigger().onTrue(
-            new SequentialCommandGroup(
-                // intake and shotgun
-                new InstantCommand(() -> elevator.setPosition(1.5)),
-                new IntakeGround(this), // CHANGE - to detect the coral?? 
-                new InstantCommand(() -> armPivot.setPosition((Constants.ArmPivotConstants.pos[RobotState.start.ordinal()]), true)),
-                new InstantCommand(() -> elevator.setPosition(Constants.ElevatorConstants.pos[RobotState.coralIntake.ordinal()])),
-                new InstantCommand(() -> claw.makeMotorSpin(-0.4)),
-                new WaitCommand(1), // TODO: make WaitUntilCommand
-                new InstantCommand(() -> claw.makeMotorSpin(-0.07))
-            )
+        // driverController.leftTrigger().onTrue(
+        //     new SequentialCommandGroup(
+        //         // intake and shotgun
+        //         new InstantCommand(() -> elevator.setPosition(1.5)),
+        //         new IntakeGround(this), // CHANGE - to detect the coral?? 
+        //         new InstantCommand(() -> armPivot.setPosition((Constants.ArmPivotConstants.pos[RobotState.start.ordinal()]), true)),
+        //         new InstantCommand(() -> elevator.setPosition(Constants.ElevatorConstants.pos[RobotState.coralIntake.ordinal()])),
+        //         new InstantCommand(() -> claw.makeMotorSpin(-0.4)),
+        //         new WaitCommand(1), // TODO: make WaitUntilCommand
+        //         new InstantCommand(() -> claw.makeMotorSpin(-0.07))
+        //     )
+        // );
+            
+        driverController.leftTrigger().whileTrue(
+            new IntakeGround(this)
         );
 
         driverController.rightTrigger().onTrue(
             new SequentialCommandGroup(
                 // score
                 new InstantCommand(() -> claw.setBrakeMode(false)),
-                new InstantCommand(() -> armPivot.setPosition(-0.98, true)),
+                new InstantCommand(() -> armPivot.setPosition(Constants.ArmPivotConstants.horizontal, true)),
                 new WaitCommand(1),
                 new InstantCommand(() -> claw.setBrakeMode(true)),
                
@@ -187,7 +193,6 @@ public class RobotContainer {
                 new WaitCommand(1),
                 //new WaitUntilCommand(()-> elevator.getEncoder() > 1.4 && elevator.getEncoder() < 1.6),
                 new InstantCommand(() -> armPivot.setPosition(Constants.ArmPivotConstants.pos[RobotState.start.ordinal()], false)),
-             //  new InstantCommand(() -> armPivot.setPosition(0.4, false)),
                 new WaitCommand(1),
                 new InstantCommand(() -> elevator.setPosition(0.8))
             )
@@ -247,7 +252,7 @@ public class RobotContainer {
         NamedCommands.registerCommand("ArmDown",
             new SequentialCommandGroup(
                 new InstantCommand(() -> claw.setBrakeMode(false)),
-                new InstantCommand(() -> armPivot.setPosition(-0.98, true)),
+                new InstantCommand(() -> armPivot.setPosition(Constants.ArmPivotConstants.horizontal, true)),
                 new WaitCommand(1),
                 new InstantCommand(() -> claw.setBrakeMode(true))
             )

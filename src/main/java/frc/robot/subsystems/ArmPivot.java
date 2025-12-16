@@ -97,7 +97,7 @@ public class ArmPivot extends SubsystemBase {
   public void setPosition(double targetPos, boolean isScoring) {
     int slot = 1; // Default to assuming arm is going down.
 
-    if (getEncoder() > targetPos) {
+    if (getEncoder() < targetPos) {
       // If arm is going up, use up PID.
       slot = 0;
     }
@@ -108,6 +108,8 @@ public class ArmPivot extends SubsystemBase {
 
     pv = new PositionVoltage(targetPos).withSlot(slot);
     motor.setControl(pv);
+
+    SmartDashboard.putNumber("Arm Pivot Target Position", targetPos);
   }
 
   public double getEncoder() {

@@ -165,16 +165,15 @@ public class Constants {
         public static final double kS = -0.059677;
         public static final double kV = 1.0622;
         public static final double kA = 0.025171;
-        public static final double kG = 3; // Changed on 3 decemeber from 4
+        public static final double kG = 1.5; // Changed on 3 decemeber from 4
 
         public static final double pos[] = {
             // ARM PIVOT
-            // 0.3567181640625, // start
-            0.35,
+            0.155, // start
             0, // coralIntake
-            -1.38427734375, // l4
-            -1.9296875, // l3
-            -1.9296875, // l2
+            -1.84228515625, // l4
+            -1.58935546875, // l3
+            -1.58935546875, // l2
             0, // l1
             -0.894287109375, // algaeReefHigh
             -0.894287109375, // algaeReefLow
@@ -185,9 +184,11 @@ public class Constants {
         
         };
 
+        // FIXME: min and max rotations are incorrect
         public static final double minRotations = -2.19384765625;
-        public static final double horizontal = -0.894287109375;
-        public static final double maxRotations = 0.546630859375;        
+        public static final double maxRotations = 0.546630859375; 
+        public static final double horizontal = -1.154052734375;
+       
     }
 
     public static class Vision {
@@ -196,18 +197,17 @@ public class Constants {
 
     public static class AlignPositions {
         public static final Pose2d tag10L = new Pose2d(
-            // 11.833539369392948,
-            // 11.65,
-            11.74,
-            4.226266826312283,
+            // 11.833539369392948, // 11.74
+            // 11.466581082718307,
+            11.6,
+            4.200891088666377,
             Rotation2d.fromDegrees(180)
         );
         public static final Pose2d tag10R = new Pose2d(
-            //11.833549038543892,
-            11.74,
-            3.8080742362798617,
+            //11.833549038543892, // 11.74, // 11.466581082718307, // 1.55
+            11.63,
+            3.871706086584795, // 3.8780742362798617,
             Rotation2d.fromDegrees(180)
-            // Rotation2d.fromDegrees(3.8264360210099335)
         );
     }
 

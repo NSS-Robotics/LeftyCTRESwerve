@@ -1,12 +1,8 @@
 package frc.robot.commands;
 
 import com.ctre.phoenix6.swerve.SwerveRequest;
-import com.ctre.phoenix6.swerve.utility.PhoenixPIDController;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotContainer;
@@ -94,7 +90,7 @@ public class Align extends Command {
                 .withVelocityX(xVelocity)
                 .withVelocityY(yVelocity)
                 .withDeadband(deadZone)
-                .withHeadingPID(1, 0, 0.1)
+                .withHeadingPID(5, 0, 0.1)
                 .withTargetDirection(targetPos.getRotation())
                 // .withMaxAbsRotationalRate(0.2)
               //  .withTargetRateFeedforward(Units.degreesToRadians(36))
@@ -108,7 +104,7 @@ public class Align extends Command {
             swerve.getPoseMeters().getY() - targetPos.getY()
         );
 
-        return distanceToTarget < 0.2;
+        return distanceToTarget < deadZone;
     }
 
     @Override

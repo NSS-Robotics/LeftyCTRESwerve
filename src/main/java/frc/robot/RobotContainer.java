@@ -29,6 +29,7 @@ import frc.robot.commands.Align;
 import frc.robot.commands.ClawOuttake;
 import frc.robot.commands.IntakeGround;
 import frc.robot.generated.TunerConstants;
+import frc.robot.commands.*;
 import frc.robot.subsystems.*;
 
 public class RobotContainer {
@@ -56,8 +57,9 @@ public class RobotContainer {
     public final Claw claw = new Claw(this);
     public final ArmPivot armPivot = new ArmPivot(this);
     public final Elevator elevator = new Elevator(this);
-
-    // Variables
+    public final ClimbPivot climbPivot = new ClimbPivot();
+    public final Climb climb = new Climb();
+     // Variables
     public boolean isCoral = true;
 
     public RobotContainer() {
@@ -200,7 +202,7 @@ public class RobotContainer {
 
         //algae 
         driverController
-            .povDown()
+            .povLeft()
             .onTrue(
                 new SequentialCommandGroup(
                     // descore algae from reef
@@ -214,7 +216,15 @@ public class RobotContainer {
         driverController
             .leftBumper()
             .onTrue(new InstantCommand(() -> new IntakeGround(this).end(false)));
+
+        driverController
+            .povDown()
+            .whileTrue(new InstantCommand(() -> climbPivot.makeMotorSpin(0.3))).onFalse(new InstantCommand(()-> climbPivot.stop()));
         
+        driverController
+            .povUp()
+            .onTrue(new SetUpClimb(elevator, armPivot, climb));
+    
         // emotional support comments
         
         // testing pid values elevator goes up and down

@@ -226,4 +226,10 @@ public class Constants {
         public static final int indexerMotorID = 50;
         public static final int indexerLaserCANID = 51;
     }
+    public static final class ClimberConstants {
+        public static final int limitSwitchID = 0;
+        public static final int motorID = 21;
+        public static final int climbPivotID = 20;
+        public static final int encoderID = 22;
+    }
 }

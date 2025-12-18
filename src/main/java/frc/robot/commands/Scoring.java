@@ -21,6 +21,7 @@ public class Scoring extends Command{
         this.elevator = rob.elevator;
         this.armPivot = rob.armPivot;
         this.claw = rob.claw;
+        
         //this.state = state;
     }
 
